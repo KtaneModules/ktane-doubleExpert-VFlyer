@@ -52,7 +52,7 @@ public class doubleExpertScript : MonoBehaviour
 
 		for(int i = 1; i < sets.Length; i++)
 		{
-			sets[i] = new InstructionSet();
+			sets[i] = new InstructionSet(bomb, qi);
         	Debug.LogFormat("[Double Expert #{0}] Instruction set {1} reads: \"{2}\"", moduleId, i+1, sets[i].GetText());
 		}
 	}
