@@ -7,6 +7,8 @@ using KModkit;
 
 class QuirkInfo
 {
+    public int startTime;
+    
     public List<char> vowels = new List<char>(new char[] {'A', 'E', 'I', 'O', 'U'});
     public bool portCondition = true;
     public int evenRemainder = 0;
@@ -15,8 +17,10 @@ class QuirkInfo
     public bool mayNinth = false;
     public bool unicorn = false;
 
-    public QuirkInfo(int moduleId, KMBombInfo bomb)
+    public QuirkInfo(int moduleId, KMBombInfo bomb, int startTime)
     {
+        this.startTime = startTime;
+
         int cnt = 0;
         Debug.LogFormat("[Double Expert #{0}] ------------Quirks------------", moduleId);
 

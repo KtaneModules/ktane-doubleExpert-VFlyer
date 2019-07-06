@@ -17,12 +17,15 @@ public class doubleExpertScript : MonoBehaviour
     int moduleId;
     private bool moduleSolved;
 
+	int startTime;
 	QuirkInfo qi;
 	int keyNumber;
 	InstructionSet[] sets;
 
 	void Awake()
 	{
+        startTime = (int)(bomb.GetTime() / 60);
+
 		moduleId = moduleIdCounter++;
 		//btn.OnInteract += delegate () { PressButton(); return false; };
 	}
@@ -35,7 +38,7 @@ public class doubleExpertScript : MonoBehaviour
 
 	void CheckQuirks()
 	{
-		qi = new QuirkInfo(moduleId, bomb);
+		qi = new QuirkInfo(moduleId, bomb, startTime);
 	}
 	
 	void GenerateInstructionSets()

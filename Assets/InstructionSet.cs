@@ -12,6 +12,9 @@ class InstructionSet
     KMBombInfo bomb;
     string text = "";
 
+    LetterAlt letter;
+    public bool runtimeLetter = false;
+
     Condition cond;
     public List<char> trueRules = new List<char>();
     public List<char> falseRules = new List<char>();
@@ -28,9 +31,8 @@ class InstructionSet
 
             if(prob < 6)
             {
-                LetterAlt letter = new LetterAlt(bomb);
-
-                trueRules.Add(letter.GetLetter());
+                letter = new LetterAlt(bomb, qi);
+                runtimeLetter = true;
 
                 text = letter.GetText() + " Then, press NEXT.";
             }
