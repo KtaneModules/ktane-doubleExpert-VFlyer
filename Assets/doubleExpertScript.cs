@@ -10,10 +10,16 @@ public class doubleExpertScript : MonoBehaviour
 	public KMBombInfo bomb;
 	public KMAudio Audio;
 
+    static System.Random rnd = new System.Random();
+
 	//Logging
 	static int moduleIdCounter = 1;
     int moduleId;
     private bool moduleSolved;
+
+	QuirkInfo qi;
+	int keyNumber;
+	InstructionSet[] sets;
 
 	void Awake()
 	{
@@ -23,11 +29,31 @@ public class doubleExpertScript : MonoBehaviour
 
 	void Start () 
 	{
-		
+		CheckQuirks();
+		GenerateInstructionSets();
+	}
+
+	void CheckQuirks()
+	{
+		qi = new QuirkInfo(moduleId, bomb);
 	}
 	
-	void Update () 
+	void GenerateInstructionSets()
 	{
-		
+		keyNumber = rnd.Next() % 40 + 30;
+
+		sets = new InstructionSet[9];
+
+        Debug.LogFormat("[Double Expert #{0}] ------------Instruction Sets------------", moduleId);
+
+		sets[0] = new KeyNumberSet(keyNumber);
+
+        Debug.LogFormat("[Double Expert #{0}] Instruction set 1 reads: \"{1}\"", moduleId, sets[0].GetText());
+
+		for(int i = 1; i < sets.Length; i++)
+		{
+			sets[i] = new InstructionSet();
+        	Debug.LogFormat("[Double Expert #{0}] Instruction set {1} reads: \"{2}\"", moduleId, i+1, sets[i].GetText());
+		}
 	}
 }
