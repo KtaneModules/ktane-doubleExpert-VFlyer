@@ -124,4 +124,15 @@ class InstructionSet
 
         return cond.CheckCondition();
     }
+
+    public List<char> GetLetters(int keyNumber)
+    {
+        if(CheckCondition())
+        {
+            if(runtimeLetter)
+                trueRules.Add(letter.GetLetter(keyNumber));
+            return trueRules;
+        }
+        else return falseRules;
+    }
 }

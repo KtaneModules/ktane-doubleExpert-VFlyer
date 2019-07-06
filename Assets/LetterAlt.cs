@@ -28,7 +28,7 @@ class LetterAlt
                 int index = rnd.Next() % letters.Count();
 
                 letter = letters.ElementAt(index);
-                text = "Apply the rule that corresponds to the " + GetOrdinal(index + 1) + "letter of the Serial Number.";
+                text = "Apply the rule that corresponds to the " + GetOrdinal(index + 1) + " letter of the Serial Number.";
                 break;
             }
             case 1:
