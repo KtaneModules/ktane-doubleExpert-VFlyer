@@ -77,7 +77,7 @@ class Condition
             case 22: text = "If there is an empty port plate on the bomb, "; break;
             case 23: text = "If the bomb has duplicate ports, "; break;
             case 24: text = "If there are no " + GetWidgetName(widgetType1) + " on the bomb, "; break;
-            case 25: text = "If the Serial Number contains a " + (vowelPrime == 0 ? "vowel" : "prime digit" + " ,"); break;
+            case 25: text = "If the Serial Number contains a " + (vowelPrime == 0 ? "vowel" : "prime digit") + ", "; break;
             case 26: text = "If the number of solved modules on the bomb is " + (moreLess == 0 ? "more than" : "less than") + " " + bomb.GetSolvableModuleNames().Count() + ", "; break;
         }
     }

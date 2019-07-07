@@ -125,6 +125,11 @@ class InstructionSet
         return cond.CheckCondition();
     }
 
+    public void SetFinalText()
+    {
+        text = text.Split(new [] {" Then,"}, StringSplitOptions.None).ElementAt(0) + " Then, flip the switch.";
+    }
+
     public List<char> GetLetters(int keyNumber)
     {
         if(CheckCondition())

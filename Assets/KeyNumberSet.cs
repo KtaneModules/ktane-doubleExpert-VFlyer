@@ -9,6 +9,6 @@ class KeyNumberSet : InstructionSet
 
     public override string GetText()
     {
-        return "Starting Key Number is " + keyNumber + ".";
+        return "Starting Key Number is " + keyNumber + ". Press NEXT.";
     }
 }
