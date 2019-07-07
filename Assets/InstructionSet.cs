@@ -7,7 +7,7 @@ using KModkit;
 
 class InstructionSet
 {
-    static System.Random rnd = new System.Random();
+    static System.Random rnd = new System.Random(); 
 
     KMBombInfo bomb;
     string text = "";
@@ -63,13 +63,13 @@ class InstructionSet
                     trueRules.Add((char) (rnd.Next() % 26 + 65));
                     trueRules.Add((char) (rnd.Next() % 26 + 65));
 
-                    text = cond.GetText() + ", apply rules " + trueRules.ElementAt(0) + " and " + trueRules.ElementAt(1) + ", in that order. Then, press NEXT.";
+                    text = cond.GetText() + "apply rules " + trueRules.ElementAt(0) + " and " + trueRules.ElementAt(1) + ", in that order. Then, press NEXT.";
                 }
                 else
                 {
                     trueRules.Add((char) (rnd.Next() % 26 + 65));
 
-                    text = cond.GetText() + ", apply rule " + trueRules.ElementAt(0) + ". Then, press NEXT.";
+                    text = cond.GetText() + "apply rule " + trueRules.ElementAt(0) + ". Then, press NEXT.";
                 } 
             }
             else
@@ -81,7 +81,7 @@ class InstructionSet
                     trueRules.Add((char) (rnd.Next() % 26 + 65));
                     falseRules.Add((char) (rnd.Next() % 26 + 65));
 
-                    text = cond.GetText() + ", apply rule " + trueRules.ElementAt(0) + ". Otherwise, apply rule " + falseRules.ElementAt(0) + ". Then, press NEXT.";
+                    text = cond.GetText() + "apply rule " + trueRules.ElementAt(0) + ". Otherwise, apply rule " + falseRules.ElementAt(0) + ". Then, press NEXT.";
                 }
                 else if (prob == 1)
                 {
@@ -89,7 +89,7 @@ class InstructionSet
                     trueRules.Add((char) (rnd.Next() % 26 + 65));
                     falseRules.Add((char) (rnd.Next() % 26 + 65));
 
-                    text = cond.GetText() + ", apply rules " + trueRules.ElementAt(0) + " and " + trueRules.ElementAt(1) + ", in that order. Otherwise, apply rule " + falseRules.ElementAt(0) + ". Then, press NEXT.";
+                    text = cond.GetText() + "apply rules " + trueRules.ElementAt(0) + " and " + trueRules.ElementAt(1) + ", in that order. Otherwise, apply rule " + falseRules.ElementAt(0) + ". Then, press NEXT.";
                 }
                 else if (prob == 2)
                 {
@@ -97,7 +97,7 @@ class InstructionSet
                     falseRules.Add((char) (rnd.Next() % 26 + 65));
                     falseRules.Add((char) (rnd.Next() % 26 + 65));
 
-                    text = cond.GetText() + ", apply rule " + trueRules.ElementAt(0) + ". Otherwise, apply rules " + falseRules.ElementAt(0) + " and " + falseRules.ElementAt(1) + ", in that order. Then, press NEXT.";
+                    text = cond.GetText() + "apply rule " + trueRules.ElementAt(0) + ". Otherwise, apply rules " + falseRules.ElementAt(0) + " and " + falseRules.ElementAt(1) + ", in that order. Then, press NEXT.";
                 }
                 else
                 {
@@ -106,7 +106,7 @@ class InstructionSet
                     falseRules.Add((char) (rnd.Next() % 26 + 65));
                     falseRules.Add((char) (rnd.Next() % 26 + 65));
 
-                    text = cond.GetText() + ", apply rules " + trueRules.ElementAt(0) + " and " + trueRules.ElementAt(1) + ", in that order. Otherwise, apply rules " + falseRules.ElementAt(0) + " and " + falseRules.ElementAt(1) + ", in that order. Then, press NEXT.";
+                    text = cond.GetText() + "apply rules " + trueRules.ElementAt(0) + " and " + trueRules.ElementAt(1) + ", in that order. Otherwise, apply rules " + falseRules.ElementAt(0) + " and " + falseRules.ElementAt(1) + ", in that order. Then, press NEXT.";
                 }
             }
         }

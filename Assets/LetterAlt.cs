@@ -94,12 +94,12 @@ class LetterAlt
                 if(rnd.Next() % 2 == 0)
                 {
                     letter = names.ElementAt(0)[0];
-                    text = "Apply the rule that corresponds to the first letter of the name of the module on the bomb that comes first alphabetically.";
+                    text = "Apply the rule that corresponds to the first character of the name of the module on the bomb that comes first alphabetically (if such rule exists).";
                 }
                 else
                 {
                     letter = names.ElementAt(names.Count() - 1)[0];
-                    text = "Apply the rule that corresponds to the first letter of the name of the module on the bomb that comes last alphabetically.";
+                    text = "Apply the rule that corresponds to the first character of the name of the module on the bomb that comes last alphabetically (if such rule exists).";
                 }
 
                 break;
