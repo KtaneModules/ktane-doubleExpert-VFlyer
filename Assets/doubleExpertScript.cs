@@ -15,12 +15,20 @@ public class doubleExpertScript : MonoBehaviour
 	public KMSelectable[] btns;
 	public KMSelectable switchBtn;
 	public GameObject switchObj;
+	public GameObject screenObj;
 	public TextMesh display;
+	public TextMesh keyword;
+	public Material[] screenColors;
 
 	//Logging
 	static int moduleIdCounter = 1;
     int moduleId;
-    private bool moduleSolved;
+    private bool moduleSolved = false;
+
+	bool submiting = false;
+	List<String> keywords;
+	int currentKeyowrd = 0;
+	int correctKeyword = 0;
 
 	int startTime;
     DayOfWeek day;
@@ -31,6 +39,7 @@ public class doubleExpertScript : MonoBehaviour
 	List<char> appliedRules = new List<char>();
 
 	Coroutine setDisplay;
+	Coroutine keywordLoop;
 
 	int currentInstructionSet = 0;
 	int latestInstructionSet = 0;
@@ -52,12 +61,83 @@ public class doubleExpertScript : MonoBehaviour
 		switchObj.transform.Rotate(0, 180f, 0);
         Audio.PlaySoundAtTransform("switch", transform);
 
+		if(moduleSolved)
+			return;
+
+		if(qi.nextIsSwitch)
+		{
+			Debug.LogFormat("[Double Expert #{0}] Strike! Quirk 5 applies. Can't flip the switch.", moduleId);
+            GetComponent<KMBombModule>().HandleStrike();
+			return;
+		}
+
+		if(qi.unicorn)
+		{
+			Debug.LogFormat("[Double Expert #{0}] Flipped the switch. Quirk 7 applies. Module solved.", moduleId);
+            moduleSolved = true;
+			GetComponent<KMBombModule>().HandlePass();
+			// StartCoroutine(SolveAnim());
+			return;
+		}
+
+		if(submiting)
+		{
+			if(currentKeyowrd == correctKeyword)
+			{
+				Debug.LogFormat("[Double Expert #{0}] Submitted {1}. Module solved.", moduleId, keywords.ElementAt(correctKeyword));
+				if(keywordLoop != null) StopCoroutine(keywordLoop);
+				moduleSolved = true;
+				GetComponent<KMBombModule>().HandlePass();
+				// StartCoroutine(SolveAnim());
+			}
+			else
+			{
+				Debug.LogFormat("[Double Expert #{0}] Strike! Submitted {1}. Expected {2}.", moduleId, keywords.ElementAt(currentKeyowrd), keywords.ElementAt(correctKeyword));
+				GetComponent<KMBombModule>().HandleStrike();
+				RestartModule();
+			}
+		}
+		else
+		{
+			CalcInstructionSet(latestInstructionSet);
+			StartKeywordSubmission();
+		}
+	}
+
+	void RestartModule()
+	{
+		submiting = false;
+		keyword.text = "";
+		if(keywordLoop != null) StopCoroutine(keywordLoop);
+
+		screenObj.transform.GetComponentInChildren<Renderer>().material = screenColors[0];
+
+		keyNumber = rnd.Next() % 40 + 30;
+
+		Debug.LogFormat("[Double Expert #{0}] ------------Instruction Sets------------", moduleId);
+
+		sets[0] = new KeyNumberSet(keyNumber);
+
+        Debug.LogFormat("[Double Expert #{0}] Instruction set 1 reads: \"{1}\"", moduleId, sets[0].GetText());
+
+		for(int i = 1; i < sets.Length; i++)
+        	Debug.LogFormat("[Double Expert #{0}] Instruction set {1} reads: \"{2}\"", moduleId, i+1, sets[i].GetText());
+	
+		currentInstructionSet = 0;
+		latestInstructionSet = 0;
+		setDisplay = StartCoroutine(DisplaySet(currentInstructionSet));
 	}
 
 	void PrevSet()
 	{
 		GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
         btns[0].AddInteractionPunch(.5f);
+
+		if(moduleSolved)
+			return;
+
+		if(submiting)
+			return;
 
 		if(currentInstructionSet == 0)
 			return;
@@ -72,7 +152,48 @@ public class doubleExpertScript : MonoBehaviour
 		GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
         btns[1].AddInteractionPunch(.5f);
 
+		if(moduleSolved)
+			return;
+
+		if(qi.unicorn)
+		{
+			Debug.LogFormat("[Double Expert #{0}] Strike! Quirk 7 applies. Can't press the NEXT button.", moduleId);
+            GetComponent<KMBombModule>().HandleStrike();
+			return;
+		}
+
 		if(currentInstructionSet == sets.Length - 1)
+		{
+			if(qi.nextIsSwitch)
+			{
+				if(submiting)
+				{
+					if(currentKeyowrd == correctKeyword)
+					{
+						Debug.LogFormat("[Double Expert #{0}] Submitted {1}. Module solved.", moduleId, keywords.ElementAt(correctKeyword));
+						if(keywordLoop != null) StopCoroutine(keywordLoop);
+						moduleSolved = true;
+						GetComponent<KMBombModule>().HandlePass();
+						// StartCoroutine(SolveAnim());
+					}
+					else
+					{
+						Debug.LogFormat("[Double Expert #{0}] Strike! Submitted {1}. Expected {2}.", moduleId, keywords.ElementAt(currentKeyowrd), keywords.ElementAt(correctKeyword));
+						GetComponent<KMBombModule>().HandleStrike();
+						RestartModule();
+					}
+				}
+				else
+				{
+					CalcInstructionSet(latestInstructionSet);
+					StartKeywordSubmission();
+				}
+			}
+			
+			return;
+		}
+
+		if(submiting)
 			return;
 
 		currentInstructionSet++;
@@ -130,7 +251,7 @@ public class doubleExpertScript : MonoBehaviour
 	{
 		CheckQuirks();
 		GenerateInstructionSets();
-		StartCoroutine(DisplaySet(currentInstructionSet));
+		setDisplay = StartCoroutine(DisplaySet(currentInstructionSet));
 	}
 
 	void CheckQuirks()
@@ -176,7 +297,7 @@ public class doubleExpertScript : MonoBehaviour
 			case 'D': return bomb.GetPortPlateCount() > 2 && qi.portCondition;
 			case 'E': return bomb.GetSerialNumber().IndexOfAny(new char[] {'2', '3', '5', '7'}) != -1;
 			case 'F': return bomb.IsPortPresent(Port.StereoRCA) && qi.portCondition;
-			case 'G': return qi.vowels.Contains(appliedRules.ElementAt(appliedRules.Count() - 2));
+			case 'G': return appliedRules.Count() != 1 ? qi.vowels.Contains(appliedRules.ElementAt(appliedRules.Count() - 2)) : false;
 			case 'H': return keyNumber > 11 || qi.mayNinth;
 			case 'I': return bomb.IsIndicatorPresent(Indicator.BOB) || qi.mayNinth;
 			case 'J': return day == DayOfWeek.Wednesday;
@@ -189,7 +310,7 @@ public class doubleExpertScript : MonoBehaviour
 			case 'Q': return bomb.GetSerialNumberLetters().Count() > bomb.GetSerialNumberNumbers().Count();
 			case 'R': return GetUniqueDigits() >= 2 || qi.mayNinth;
 			case 'S': return GetGreatestPortCount() <= 1 && qi.portCondition;
-			case 'T': return "PREVIOUS".ToList().Exists(x => x == appliedRules.ElementAt(appliedRules.Count() - 2)) || qi.mayNinth;
+			case 'T': return appliedRules.Count() != 1 ? "PREVIOUS".ToList().Exists(x => x == appliedRules.ElementAt(appliedRules.Count() - 2)) || qi.mayNinth : false;
 			case 'U': return ((int)bomb.GetTime() / 60) % 2 == qi.evenRemainder;
 			case 'V': return bomb.GetSolvedModuleNames().Count == 5;
 			case 'W': return keyNumber == bomb.GetBatteryCount();
@@ -303,6 +424,64 @@ public class doubleExpertScript : MonoBehaviour
 		return value;
 	}
 
+	void StartKeywordSubmission()
+	{
+        Debug.LogFormat("[Double Expert #{0}] ------------Keywords------------", moduleId);
+        Debug.LogFormat("[Double Expert #{0}] Solving keywords for Key Number = {1}.", moduleId, keyNumber);
+
+		submiting = true;
+		screenObj.transform.GetComponentInChildren<Renderer>().material = screenColors[1];
+		display.text = "";
+        Audio.PlaySoundAtTransform("spark", transform);
+
+		keywords = GetRandomKeywords();
+		String correct;
+
+        Debug.LogFormat("[Double Expert #{0}] Available keywords are [ {1}].", moduleId, GetKeywords(keywords));
+
+		if(keyNumber <= 0) correct = keywords.ElementAt(0);
+		else if(keyNumber <= 15) correct = keywords.ElementAt(1);
+		else if(keyNumber <= 30) correct = keywords.ElementAt(2);
+		else if(keyNumber <= 45) correct = keywords.ElementAt(3);
+		else if(keyNumber <= 60) correct = keywords.ElementAt(4);
+		else if(keyNumber <= 75) correct = keywords.ElementAt(5);
+		else if(keyNumber <= 90) correct = keywords.ElementAt(6);
+		else correct = keywords.ElementAt(7);
+
+        Debug.LogFormat("[Double Expert #{0}] Correct keyword is {1}.", moduleId, correct);
+
+		keywords = keywords.OrderBy(x => rnd.Next()).ToList();
+		correctKeyword = keywords.IndexOf(correct);
+		keywordLoop = StartCoroutine(KeywordLoop(keywords));
+	}
+
+	List<String> GetRandomKeywords()
+	{
+		List<String> ret = new List<string>();
+
+		ret.Add(new String[] { "Apple", "Delta", "Greek", "Juliett", "Maniac", "Papa", "Single", "Victor", "X-ray", "YMCA", "Zulu"}.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
+		ret.Add(new String[] { "Alpha", "Diamond", "Golf", "Jenga", "Mike", "Pope", "Sierra", "Vow", "Xbox", "Yo-Yo", "Zebra"}.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
+		ret.Add(new String[] { "Banana", "Echo", "Hawaii", "Kilo", "Nutmeg", "Quebec", "Triple", "Violet", "X-file", "Ygor", "Zapra"}.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
+		ret.Add(new String[] { "Beta", "Emerald", "Hotel", "Kenya", "November", "Quiet", "Tango", "Vent Gas", "Xcitebike", "Yeet", "Zebstrika"}.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
+		ret.Add(new String[] { "Cherry", "Foxtrot", "Indigo", "Lima", "Otto", "Romeo", "Ultimate", "Whiskey", "X-men", "Yippy", "Zenoblade"}.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
+		ret.Add(new String[] { "Charlie", "Fluorite", "India", "Lingerie", "Oscar", "Rodeo", "Uniform", "Wires", "X-mas", "Yes", "Zelda"}.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
+		ret.Add(new String[] { "Back", "Define", "High", "Jackal", "Monsplode", "Quiper", "Stunt", "Words", "Xenoblade", "YoVile", "Zen Mode"}.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
+		ret.Add(new String[] { "Cabin", "FedEx", "Gothi", "Kojima", "Nominate", "Prequire", "Tuesday", "Wii", "X01", "Yankee", "Zoo"}.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
+		ret.Add(new String[] { "Chocolate", "Diadem", "Half", "Jakarta", "Not", "Rope", "Thursday", "Warsaw", "X", "Yodeling", "Zero"}.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
+
+		return ret;
+	}
+
+	String GetKeywords(List<string> keywords)
+	{
+		String ret = "";
+
+		foreach(String kw in keywords)
+			ret += kw + ", ";
+
+		return ret;
+	}
+
 	IEnumerator DisplaySet(int set)
 	{
 		String instr = sets[set].GetText();
@@ -351,5 +530,30 @@ public class doubleExpertScript : MonoBehaviour
 		}
 
 		yield return true;
+	}
+
+	IEnumerator KeywordLoop(List<String> keywords)
+	{
+		if(setDisplay != null) StopCoroutine(setDisplay);
+
+		while(true)
+		{
+			String kw = keywords.ElementAt(currentKeyowrd);
+
+			for(int j = 0; j < kw.Length; j++)
+			{
+				if(rnd.Next() % 6 < sets.Length - latestInstructionSet - 1)
+				{
+					char[] chars = kw.ToCharArray();
+					chars[j] = GetRandomChar();
+					kw =  new string(chars);
+				}
+			}
+
+			keyword.text = kw;
+			yield return new WaitForSeconds(0.8f);
+			currentKeyowrd++;
+			if(currentKeyowrd == keywords.Count()) currentKeyowrd = 0;
+		}
 	}
 }
