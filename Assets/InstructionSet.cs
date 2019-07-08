@@ -9,13 +9,12 @@ class InstructionSet
 {
     static System.Random rnd = new System.Random(); 
 
-    KMBombInfo bomb;
     string text = "";
 
     LetterAlt letter;
     public bool runtimeLetter = false;
 
-    Condition cond;
+    public Condition cond;
     public List<char> trueRules = new List<char>();
     public List<char> falseRules = new List<char>();
 
@@ -23,8 +22,6 @@ class InstructionSet
 
     public InstructionSet(KMBombInfo bomb, QuirkInfo qi)
     {
-        this.bomb = bomb;
-
         if(rnd.Next() % 2 == 0)
         {
             int prob = rnd.Next() % 10;
@@ -117,12 +114,12 @@ class InstructionSet
         return text;
     }
 
-    public bool CheckCondition()
+    public bool CheckCondition(int keyNumber)
     {
         if(cond == null)
             return true;
 
-        return cond.CheckCondition();
+        return cond.CheckCondition(keyNumber);
     }
 
     public void SetFinalText()
@@ -132,7 +129,7 @@ class InstructionSet
 
     public List<char> GetLetters(int keyNumber)
     {
-        if(CheckCondition())
+        if(CheckCondition(keyNumber))
         {
             if(runtimeLetter)
                 trueRules.Add(letter.GetLetter(keyNumber));

@@ -76,9 +76,54 @@ public class doubleExpertScript : MonoBehaviour
 			return;
 
 		currentInstructionSet++;
-		if(currentInstructionSet > latestInstructionSet) latestInstructionSet = currentInstructionSet;
+		if(currentInstructionSet > latestInstructionSet)
+		{
+			CalcInstructionSet(latestInstructionSet);
+			latestInstructionSet = currentInstructionSet;
+		}
 		if(setDisplay != null) StopCoroutine(setDisplay);
 		setDisplay = StartCoroutine(DisplaySet(currentInstructionSet));
+	}
+
+	void CalcInstructionSet(int set)
+	{
+		Debug.LogFormat("[Double Expert #{0}] ------------Instruction Set {1}------------", moduleId, set + 1);
+		
+		List<char> rules = sets[set].GetLetters(keyNumber);	
+
+		if(sets[set].cond == null)
+			Debug.LogFormat("[Double Expert #{0}] Instruction Set {1} has no condition. Applying rule(s) [ {2}].", moduleId, set + 1, GetRules(rules));
+		else if(sets[set].CheckCondition(keyNumber))
+			Debug.LogFormat("[Double Expert #{0}] Instruction Set {1} condition returned true. Applying rule(s) [ {2}].", moduleId, set + 1, GetRules(rules));
+		else
+			Debug.LogFormat("[Double Expert #{0}] Instruction Set {1} condition returned false. Applying rule(s) [ {2}].", moduleId, set + 1, GetRules(rules));
+		
+		foreach(char rule in rules)
+		{
+			int ruleCnt = appliedRules.Count();
+			if(CheckRule(rule))
+			{
+				ApplyRuleEffects(rule);
+				Debug.LogFormat("[Double Expert #{0}] Rule {1} condition returned true. New Key Number is {2}.", moduleId, rule, keyNumber);
+			}
+			else if(appliedRules.Count() != ruleCnt)
+			{
+				Debug.LogFormat("[Double Expert #{0}] Rule {1} condition returned false. Key Number doesn't change.", moduleId, rule, keyNumber);
+			}
+		}
+	}
+
+	String GetRules(List<char> rules)
+	{
+		String ret = "";
+
+		if(rules.Count() == 0)
+			return "None ";
+
+		foreach(char rule in rules)
+			ret += rule + " ";
+
+		return ret;
 	}
 
 	void Start () 
@@ -128,7 +173,7 @@ public class doubleExpertScript : MonoBehaviour
 			case 'A': return (bomb.GetSerialNumber().IndexOfAny(qi.vowels.ToArray()) != -1) || qi.mayNinth;
 			case 'B': return bomb.GetBatteryCount() > 3 || qi.mayNinth;
 			case 'C': return bomb.IsPortPresent(Port.Parallel) && qi.portCondition;
-			case 'D': return bomb.GetPortPlateCount() > 2 || qi.portCondition;
+			case 'D': return bomb.GetPortPlateCount() > 2 && qi.portCondition;
 			case 'E': return bomb.GetSerialNumber().IndexOfAny(new char[] {'2', '3', '5', '7'}) != -1;
 			case 'F': return bomb.IsPortPresent(Port.StereoRCA) && qi.portCondition;
 			case 'G': return qi.vowels.Contains(appliedRules.ElementAt(appliedRules.Count() - 2));
@@ -136,18 +181,19 @@ public class doubleExpertScript : MonoBehaviour
 			case 'I': return bomb.IsIndicatorPresent(Indicator.BOB) || qi.mayNinth;
 			case 'J': return day == DayOfWeek.Wednesday;
 			case 'K': return bomb.GetSolvedModuleNames().Count() < 6;
-			case 'L': return keyNumber % 2 == qi.evenRemainder;
+			case 'L': return Math.Abs(keyNumber) % 2 == qi.evenRemainder;
 			case 'M': return !bomb.GetPortPlates().Any((x) => x.Length == 0);
 			case 'N': return (bomb.GetSolvableModuleNames().Count() - bomb.GetSolvedModuleNames().Count()) < 5;
 			case 'O': return bomb.GetSerialNumber().IndexOfAny("DOUBLE".ToArray()) != -1;
 			case 'P': return bomb.IsPortPresent(Port.DVI) && qi.portCondition;
-			case 'R': return GetUniqueDigits() > 2 || qi.mayNinth;
+			case 'Q': return bomb.GetSerialNumberLetters().Count() > bomb.GetSerialNumberNumbers().Count();
+			case 'R': return GetUniqueDigits() >= 2 || qi.mayNinth;
 			case 'S': return GetGreatestPortCount() <= 1 && qi.portCondition;
 			case 'T': return "PREVIOUS".ToList().Exists(x => x == appliedRules.ElementAt(appliedRules.Count() - 2)) || qi.mayNinth;
-			case 'U': return (bomb.GetTime() / 60) % 2 == qi.evenRemainder;
+			case 'U': return ((int)bomb.GetTime() / 60) % 2 == qi.evenRemainder;
 			case 'V': return bomb.GetSolvedModuleNames().Count == 5;
 			case 'W': return keyNumber == bomb.GetBatteryCount();
-			case 'X': return keyNumber > 12;
+			case 'X': return keyNumber < 12;
 			case 'Y': return keyNumber < 65 || qi.mayNinth;
 			case 'Z': return keyNumber < 0;
 		}
@@ -172,7 +218,7 @@ public class doubleExpertScript : MonoBehaviour
 			case 'I': keyNumber = 0; break;
 			case 'J': keyNumber += 10 * qi.addMultiplier; break;
 			case 'K': keyNumber += (bomb.GetSolvableModuleNames().Count() - bomb.GetSolvedModuleNames().Count()) * qi.addMultiplier; break;
-			case 'L': ApplyRuleEffects(appliedRules.ElementAt(appliedRules.Count() - 1)); break;
+			case 'L': if(appliedRules.Count() != 1 && appliedRules.ElementAt(appliedRules.Count() - 2) != 'L') ApplyRuleEffects(appliedRules.ElementAt(appliedRules.Count() - 2)); break;
 			case 'M': keyNumber -= bomb.GetPortCount() * qi.addMultiplier; break;
 			case 'N': keyNumber += bomb.GetSolvedModuleNames().Count() * qi.addMultiplier; break;
 			case 'O': keyNumber *= 2; break;

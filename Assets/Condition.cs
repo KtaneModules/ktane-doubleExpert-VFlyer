@@ -97,7 +97,7 @@ class Condition
             case 3: return (indicatorType1 == 0 ? bomb.GetOnIndicators().Count() > bomb.GetOffIndicators().Count() : bomb.GetOnIndicators().Count() < bomb.GetOffIndicators().Count());
             case 4: return bomb.GetSerialNumberNumbers().Sum() % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
             case 5: return moreLess == 0 ? bomb.GetSerialNumberNumbers().Sum() > 15 : bomb.GetSerialNumberNumbers().Sum() < 15;
-            case 6: return keyNumber % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
+            case 6: return Math.Abs(keyNumber) % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
             case 7: return moreLess == 0 ? keyNumber > 50 : keyNumber < 50;
             case 8: return (moreLess == 0 ? GetWidgetCount(widgetType1) >= 3 : GetWidgetCount(widgetType1) <= 3) && (widgetType1 != 2 || qi.portCondition);
             case 9: return (GetWidgetCount(widgetType1) % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1)) &&  (widgetType1 != 2 || qi.portCondition);
