@@ -114,7 +114,7 @@ class Condition
             case 20: return moreLess == 0 ? keyNumber > bomb.GetSerialNumberNumbers().Sum() : keyNumber < bomb.GetSerialNumberNumbers().Sum();
             case 21: return word.IndexOfAny(bomb.GetSerialNumberLetters().ToArray()) != -1;
             case 22: return bomb.GetPortPlates().Any((x) => x.Length == 0);
-            case 23: return (GetGreatersPortCount() > 1) && qi.portCondition;
+            case 23: return (GetGreatestPortCount() > 1) && qi.portCondition;
             case 24: return (GetWidgetCount(widgetType1) == 0) && (widgetType1 != 2 || qi.portCondition);
             case 25: return vowelPrime == 0 ? bomb.GetSerialNumber().IndexOfAny(qi.vowels.ToArray()) != -1 : bomb.GetSerialNumber().IndexOfAny(new char[] {'2', '3', '5', '7'}) != -1;
             case 26: return moreLess == 0 ? bomb.GetSolvedModuleNames().Count() > (bomb.GetSolvableModuleNames().Count / 2) : bomb.GetSolvedModuleNames().Count() < (bomb.GetSolvableModuleNames().Count / 2);
@@ -278,7 +278,7 @@ class Condition
         return currentPort;
     }
 
-    int GetGreatersPortCount()
+    public static int GetGreatestPortCount()
     {
         Port[] ports = {Port.DVI, Port.PS2, Port.Parallel, Port.RJ45, Port.Serial, Port.StereoRCA };
         int cnt = 0;

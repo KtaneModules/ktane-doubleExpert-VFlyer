@@ -23,9 +23,12 @@ public class doubleExpertScript : MonoBehaviour
     private bool moduleSolved;
 
 	int startTime;
+    DayOfWeek day;
+
 	QuirkInfo qi;
 	int keyNumber;
 	InstructionSet[] sets;
+	List<char> appliedRules = new List<char>();
 
 	Coroutine setDisplay;
 
@@ -35,6 +38,7 @@ public class doubleExpertScript : MonoBehaviour
 	void Awake()
 	{
         startTime = (int)(bomb.GetTime() / 60);
+		day = DateTime.Now.DayOfWeek;
 
 		moduleId = moduleIdCounter++;
 		switchBtn.OnInteract += delegate () { FlipSwitch(); return false; };
@@ -114,6 +118,71 @@ public class doubleExpertScript : MonoBehaviour
 		char[] chars = new char[] { '|', '\\', '!', '"', '@', '#', '£', '$', '§', '%','&', '/', '{', '(', '[', ')', ']', '=', '}', '?', '\'', '»', '«', '<', '>', '€', ',', ';', '.', ':', '-', '_', '*', '+'};
 		return chars[rnd.Next() % chars.Length];
 	}
+
+	bool CheckRule(char rule)
+	{
+		appliedRules.Add(rule);
+
+		switch(rule)
+		{
+			case 'A': return (bomb.GetSerialNumber().IndexOfAny(qi.vowels.ToArray()) != -1) || qi.mayNinth;
+			case 'B': return bomb.GetBatteryCount() > 3 || qi.mayNinth;
+			case 'C': return bomb.IsPortPresent(Port.Parallel) && qi.portCondition;
+			case 'D': return bomb.GetPortPlateCount() > 2 || qi.portCondition;
+			case 'E': return bomb.GetSerialNumber().IndexOfAny(new char[] {'2', '3', '5', '7'}) != -1;
+			case 'F': return bomb.IsPortPresent(Port.StereoRCA) && qi.portCondition;
+			case 'G': return qi.vowels.Contains(appliedRules.ElementAt(appliedRules.Count() - 2));
+			case 'H': return keyNumber > 11 || qi.mayNinth;
+			case 'I': return bomb.IsIndicatorPresent(Indicator.BOB) || qi.mayNinth;
+			case 'J': return day == DayOfWeek.Wednesday;
+			case 'K': return bomb.GetSolvedModuleNames().Count() < 6;
+			case 'L': return keyNumber % 2 == qi.evenRemainder;
+			case 'M': return !bomb.GetPortPlates().Any((x) => x.Length == 0);
+			case 'N': return (bomb.GetSolvableModuleNames().Count() - bomb.GetSolvedModuleNames().Count()) < 5;
+			case 'O': return bomb.GetSerialNumber().IndexOfAny("DOUBLE".ToArray()) != -1;
+			case 'P': return bomb.IsPortPresent(Port.DVI) && qi.portCondition;
+			case 'R': return GetUniqueDigits() > 2 || qi.mayNinth;
+			case 'S': return GetGreatestPortCount() <= 1 && qi.portCondition;
+			case 'T': return "PREVIOUS".ToList().Exists(x => x == appliedRules.ElementAt(appliedRules.Count() - 2)) || qi.mayNinth;
+			case 'U': return (bomb.GetTime() / 60) % 2 == qi.evenRemainder;
+			case 'V': return bomb.GetSolvedModuleNames().Count == 5;
+			case 'W': return keyNumber == bomb.GetBatteryCount();
+			case 'X': return keyNumber > 12;
+			case 'Y': return keyNumber < 65 || qi.mayNinth;
+			case 'Z': return keyNumber < 0;
+		}
+
+		appliedRules.Remove(rule);
+        Debug.LogFormat("[Double Expert #{0}] No rule matches character {1}. Ignoring.", moduleId, rule);
+		return false;
+	}
+
+	int GetUniqueDigits()
+	{
+		List<int> digits = new List<int>();
+		IEnumerable<int> sn = bomb.GetSerialNumberNumbers();
+
+		foreach(int digit in sn)
+		{
+			if( (digit % 2 == (qi.evenRemainder - 1) * -1) && !digits.Exists(x => x == digit) )
+				digits.Add(digit);
+		}
+
+		return digits.Count();
+	}
+
+	int GetGreatestPortCount()
+    {
+        Port[] ports = {Port.DVI, Port.PS2, Port.Parallel, Port.RJ45, Port.Serial, Port.StereoRCA };
+        int cnt = 0;
+        for(int i = 0; i < ports.Length; i++)
+        {
+            if(bomb.GetPortCount(ports[i]) > cnt)
+                cnt = bomb.GetPortCount(ports[i]);
+        }
+
+        return cnt;
+    }
 
 	IEnumerator DisplaySet(int set)
 	{
