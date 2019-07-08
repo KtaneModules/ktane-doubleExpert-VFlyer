@@ -13,6 +13,8 @@ public class doubleExpertScript : MonoBehaviour
     static System.Random rnd = new System.Random();
 
 	public KMSelectable[] btns;
+	public KMSelectable switchBtn;
+	public GameObject switchObj;
 	public TextMesh display;
 
 	//Logging
@@ -35,8 +37,17 @@ public class doubleExpertScript : MonoBehaviour
         startTime = (int)(bomb.GetTime() / 60);
 
 		moduleId = moduleIdCounter++;
+		switchBtn.OnInteract += delegate () { FlipSwitch(); return false; };
 		btns[0].OnInteract += delegate () { PrevSet(); return false; };
 		btns[1].OnInteract += delegate () { NextSet(); return false; };
+	}
+
+	void FlipSwitch()
+	{
+       	switchBtn.AddInteractionPunch(.5f);
+		switchObj.transform.Rotate(0, 180f, 0);
+        Audio.PlaySoundAtTransform("switch", transform);
+
 	}
 
 	void PrevSet()
@@ -119,7 +130,7 @@ public class doubleExpertScript : MonoBehaviour
 		{
 			for(int j = 0; j < words[i].Length; j++)
 			{
-				if(rnd.Next() % 10 < prob)
+				if(rnd.Next() % 12 < prob)
 				{
 					char[] chars = words[i].ToCharArray();
 					chars[j] = GetRandomChar();

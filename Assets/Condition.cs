@@ -62,10 +62,10 @@ class Condition
             case 7: text = "If the current Key Number is " + (moreLess == 0 ? "more than 50" : "less that 50") + ", "; break;
             case 8: text = "If there are 3 or " + (moreLess == 0 ? "more " : "less ") + GetWidgetName(widgetType1) + " on the bomb, "; break;
             case 9: text = "If the number of " + GetWidgetName(widgetType1) + " on the bomb is " + (evenOdd == 0 ? "even" : "odd") + ", "; break;
-            case 10: text = "If the most common port type is " + GetPortName(false) + ", "; break;
+            case 10: text = "If there are more " + GetPortName(false) + " ports than any other port type, "; break;
             case 11: text = "If there is " + GetIndicatorName() + " indicator on the bomb, "; break;
             case 12: text = "If the number of incurred strikes is " + (evenOdd == 0 ? "even" : "odd") + ", "; break;
-            case 13: text = "If there are " + (moreLess == 0 ? "more" : "less") + "solved modules than unsolved modules on the bomb, "; break;
+            case 13: text = "If there are " + (moreLess == 0 ? "more" : "less") + " solved modules than unsolved modules on the bomb, "; break;
             case 14: text = "If the starting bomb time (whole minutes) is " + (evenOdd == 0 ? "even" : "odd") + ", "; break;
             case 15: text = "If the starting bomb time (whole minutes) is " + (moreLess == 0 ? "more than" : "less than") + " 30, "; break;
             case 16: text = "If the number of modules on the bomb is " + (evenOdd == 0 ? "even" : "odd") + ", "; break;
@@ -78,7 +78,7 @@ class Condition
             case 23: text = "If the bomb has duplicate ports, "; break;
             case 24: text = "If there are no " + GetWidgetName(widgetType1) + " on the bomb, "; break;
             case 25: text = "If the Serial Number contains a " + (vowelPrime == 0 ? "vowel" : "prime digit") + ", "; break;
-            case 26: text = "If the number of solved modules on the bomb is " + (moreLess == 0 ? "more than" : "less than") + " " + bomb.GetSolvableModuleNames().Count() + ", "; break;
+            case 26: text = "If the number of solved modules on the bomb is " + (moreLess == 0 ? "more than" : "less than") + " " + bomb.GetSolvableModuleNames().Count() / 2 + ", "; break;
         }
     }
 
@@ -87,8 +87,39 @@ class Condition
         return text;
     }
 
-    public bool CheckCondition()
+    public bool CheckCondition(int keyNumber)
     {
+        switch(rule)
+        {
+            case 0: return bomb.IsPortPresent(port) && qi.portCondition;
+            case 1: return GetWidgetCount(widgetType1) > GetWidgetCount(widgetType2);
+            case 2: return (batteryType1 == 0 ? bomb.GetBatteryCount(Battery.AA) > bomb.GetBatteryCount(Battery.D) : bomb.GetBatteryCount(Battery.AA) < bomb.GetBatteryCount(Battery.D));
+            case 3: return (indicatorType1 == 0 ? bomb.GetOnIndicators().Count() > bomb.GetOffIndicators().Count() : bomb.GetOnIndicators().Count() < bomb.GetOffIndicators().Count());
+            case 4: return bomb.GetSerialNumberNumbers().Sum() % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
+            case 5: return moreLess == 0 ? bomb.GetSerialNumberNumbers().Sum() > 15 : bomb.GetSerialNumberNumbers().Sum() < 15;
+            case 6: return keyNumber % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
+            case 7: return moreLess == 0 ? keyNumber > 50 : keyNumber < 50;
+            case 8: return (moreLess == 0 ? GetWidgetCount(widgetType1) >= 3 : GetWidgetCount(widgetType1) <= 3) && (widgetType1 != 2 || qi.portCondition);
+            case 9: return (GetWidgetCount(widgetType1) % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1)) &&  (widgetType1 != 2 || qi.portCondition);
+            case 10: return (GetMostCommonPort() == port) && qi.portCondition;    
+            case 11: return bomb.IsIndicatorPresent(indicator);
+            case 12: return bomb.GetStrikes() % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
+            case 13: return moreLess == 0 ? bomb.GetSolvedModuleNames().Count() > (bomb.GetSolvableModuleNames().Count - bomb.GetSolvedModuleNames().Count()) : bomb.GetSolvedModuleNames().Count() < (bomb.GetSolvableModuleNames().Count - bomb.GetSolvedModuleNames().Count());
+            case 14: return qi.startTime % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
+            case 15: return moreLess == 0 ? qi.startTime > 50 : qi.startTime < 50;
+            case 16: return bomb.GetModuleNames().Count() % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
+            case 17: return moreLess == 0 ? bomb.GetModuleNames().Count() > 15 : bomb.GetModuleNames().Count() < 15;
+            case 18: return (lettersDigits == 0 ? bomb.GetSerialNumberLetters().Count() : bomb.GetSerialNumberNumbers().Count()) % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
+            case 19: return (bomb.GetModuleNames().Count() - bomb.GetSolvableModuleNames().Count) != 0;
+            case 20: return moreLess == 0 ? keyNumber > bomb.GetSerialNumberNumbers().Sum() : keyNumber < bomb.GetSerialNumberNumbers().Sum();
+            case 21: return word.IndexOfAny(bomb.GetSerialNumberLetters().ToArray()) != -1;
+            case 22: return bomb.GetPortPlates().Any((x) => x.Length == 0);
+            case 23: return (GetGreatersPortCount() > 1) && qi.portCondition;
+            case 24: return (GetWidgetCount(widgetType1) == 0) && (widgetType1 != 2 || qi.portCondition);
+            case 25: return vowelPrime == 0 ? bomb.GetSerialNumber().IndexOfAny(qi.vowels.ToArray()) != -1 : bomb.GetSerialNumber().IndexOfAny(new char[] {'2', '3', '5', '7'}) != -1;
+            case 26: return moreLess == 0 ? bomb.GetSolvedModuleNames().Count() > (bomb.GetSolvableModuleNames().Count / 2) : bomb.GetSolvedModuleNames().Count() < (bomb.GetSolvableModuleNames().Count / 2);
+        }
+
         return true;
     }
 
@@ -211,5 +242,52 @@ class Condition
         }
 
         return "";
+    }
+
+    int GetWidgetCount(int widgetType)
+    {
+        switch(widgetType)
+        {
+            case 0: return bomb.GetBatteryCount();
+            case 1: return bomb.GetIndicators().Count();
+            case 2: return bomb.GetPortCount();
+        }
+
+        return -1;
+    }
+
+    Port GetMostCommonPort()
+    {
+        Port[] ports = {Port.DVI, Port.PS2, Port.Parallel, Port.RJ45, Port.Serial, Port.StereoRCA };
+        Port currentPort = Port.AC;
+        int portCnt = -1;
+
+        for(int i = 0; i < ports.Length; i++)
+        {
+            if(bomb.GetPortCount(ports[i]) > portCnt)
+            {
+                currentPort = ports[i];
+                portCnt = bomb.GetPortCount(ports[i]);
+            }
+            else if(bomb.GetPortCount(ports[i]) == portCnt)
+            {
+                currentPort = Port.AC;
+            }
+        }
+
+        return currentPort;
+    }
+
+    int GetGreatersPortCount()
+    {
+        Port[] ports = {Port.DVI, Port.PS2, Port.Parallel, Port.RJ45, Port.Serial, Port.StereoRCA };
+        int cnt = 0;
+        for(int i = 0; i < ports.Length; i++)
+        {
+            if(bomb.GetPortCount(ports[i]) > cnt)
+                cnt = bomb.GetPortCount(ports[i]);
+        }
+
+        return cnt;
     }
 }
