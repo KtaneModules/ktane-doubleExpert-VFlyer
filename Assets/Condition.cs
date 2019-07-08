@@ -175,7 +175,7 @@ class Condition
         switch(indicator)
         {
             case Indicator.BOB: return "a BOB";
-            case Indicator.CAR: return "a CAN";
+            case Indicator.CAR: return "a CAR";
             case Indicator.CLR: return "a CLR";
             case Indicator.FRK: return "an FRK";
             case Indicator.FRQ: return "an FRQ";

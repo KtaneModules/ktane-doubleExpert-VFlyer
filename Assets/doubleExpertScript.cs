@@ -76,7 +76,7 @@ public class doubleExpertScript : MonoBehaviour
 			Debug.LogFormat("[Double Expert #{0}] Flipped the switch. Quirk 7 applies. Module solved.", moduleId);
             moduleSolved = true;
 			GetComponent<KMBombModule>().HandlePass();
-			// StartCoroutine(SolveAnim());
+			StartCoroutine(SolveAnim());
 			return;
 		}
 
@@ -88,7 +88,7 @@ public class doubleExpertScript : MonoBehaviour
 				if(keywordLoop != null) StopCoroutine(keywordLoop);
 				moduleSolved = true;
 				GetComponent<KMBombModule>().HandlePass();
-				// StartCoroutine(SolveAnim());
+				StartCoroutine(SolveAnim());
 			}
 			else
 			{
@@ -174,7 +174,7 @@ public class doubleExpertScript : MonoBehaviour
 						if(keywordLoop != null) StopCoroutine(keywordLoop);
 						moduleSolved = true;
 						GetComponent<KMBombModule>().HandlePass();
-						// StartCoroutine(SolveAnim());
+						StartCoroutine(SolveAnim());
 					}
 					else
 					{
@@ -555,5 +555,35 @@ public class doubleExpertScript : MonoBehaviour
 			currentKeyowrd++;
 			if(currentKeyowrd == keywords.Count()) currentKeyowrd = 0;
 		}
+	}
+
+	IEnumerator SolveAnim()
+	{
+        Audio.PlaySoundAtTransform("spark", transform);
+        Audio.PlaySoundAtTransform("shutdown", transform);
+
+		yield return new WaitForSeconds(0.5f);
+		screenObj.SetActive(false);
+		yield return new WaitForSeconds(0.1f);
+		screenObj.SetActive(true);
+		yield return new WaitForSeconds(0.5f);
+		screenObj.SetActive(false);
+		yield return new WaitForSeconds(0.1f);
+		screenObj.SetActive(true);
+		yield return new WaitForSeconds(0.4f);
+		screenObj.SetActive(false);
+		yield return new WaitForSeconds(0.2f);
+		screenObj.SetActive(true);
+		yield return new WaitForSeconds(0.5f);
+		screenObj.SetActive(false);
+		yield return new WaitForSeconds(0.3f);
+		screenObj.SetActive(true);
+		yield return new WaitForSeconds(0.2f);
+		screenObj.SetActive(false);
+		yield return new WaitForSeconds(0.3f);
+		screenObj.SetActive(true);
+		yield return new WaitForSeconds(0.1f);
+		screenObj.SetActive(false);
+
 	}
 }
