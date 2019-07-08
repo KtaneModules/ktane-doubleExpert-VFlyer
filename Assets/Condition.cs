@@ -278,7 +278,7 @@ class Condition
         return currentPort;
     }
 
-    public static int GetGreatestPortCount()
+    int GetGreatestPortCount()
     {
         Port[] ports = {Port.DVI, Port.PS2, Port.Parallel, Port.RJ45, Port.Serial, Port.StereoRCA };
         int cnt = 0;

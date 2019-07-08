@@ -157,6 +157,39 @@ public class doubleExpertScript : MonoBehaviour
 		return false;
 	}
 
+	void ApplyRuleEffects(int rule)
+	{
+		switch(rule)
+		{
+			case 'A': keyNumber -= (bomb.GetSerialNumberNumbers().Sum() + bomb.GetBatteryCount()) * qi.addMultiplier; break;
+			case 'B': keyNumber -= bomb.GetSerialNumberNumbers().ElementAt(bomb.GetSerialNumberNumbers().Count() - 1) * qi.addMultiplier; break;
+			case 'C': keyNumber += bomb.GetBatteryHolderCount() * qi.addMultiplier; break;
+			case 'D': keyNumber += bomb.GetPortCount() * qi.addMultiplier; break;
+			case 'E': keyNumber -= (5 + bomb.GetOffIndicators().Count()) * qi.addMultiplier; break;
+			case 'F': keyNumber *= bomb.GetOnIndicators().Count(); break;
+			case 'G': keyNumber /= 2; break;
+			case 'H': keyNumber -= (int)(bomb.GetTime() / 60) * qi.addMultiplier; break;
+			case 'I': keyNumber = 0; break;
+			case 'J': keyNumber += 10 * qi.addMultiplier; break;
+			case 'K': keyNumber += (bomb.GetSolvableModuleNames().Count() - bomb.GetSolvedModuleNames().Count()) * qi.addMultiplier; break;
+			case 'L': ApplyRuleEffects(appliedRules.ElementAt(appliedRules.Count() - 1)); break;
+			case 'M': keyNumber -= bomb.GetPortCount() * qi.addMultiplier; break;
+			case 'N': keyNumber += bomb.GetSolvedModuleNames().Count() * qi.addMultiplier; break;
+			case 'O': keyNumber *= 2; break;
+			case 'P': keyNumber += (bomb.GetPortCount() - bomb.GetPortCount(Port.DVI)) * qi.addMultiplier; break;
+			case 'Q': keyNumber -= GetAlphaPositionSun() * qi.addMultiplier; break;
+			case 'R': keyNumber -= bomb.GetSerialNumberNumbers().Sum() * qi.addMultiplier; break;
+			case 'S': keyNumber += bomb.GetPortPlateCount() * qi.addMultiplier; break;
+			case 'T': keyNumber += GetVowelNumber() * bomb.GetSerialNumberNumbers().ElementAt(bomb.GetSerialNumberNumbers().Count() - 1) * qi.addMultiplier; break;
+			case 'U': keyNumber = CalcDigitalRoot(keyNumber); break;
+			case 'V': keyNumber += (bomb.GetModuleNames().Count() - bomb.GetSolvableModuleNames().Count() == 0 ? 9 : bomb.GetModuleNames().Count() - bomb.GetSolvableModuleNames().Count()) * qi.addMultiplier; break;
+			case 'W': keyNumber -= bomb.GetBatteryHolderCount() * qi.addMultiplier; break;
+			case 'X': keyNumber *= -1; break;
+			case 'Y': keyNumber += (bomb.GetBatteryCount() + bomb.GetIndicators().Count() + bomb.GetPortCount()) * qi.addMultiplier; break;
+			case 'Z': keyNumber = (-keyNumber) + (bomb.GetSolvableModuleNames().Count() - bomb.GetSolvedModuleNames().Count()) * qi.addMultiplier; break;
+		}
+	}
+
 	int GetUniqueDigits()
 	{
 		List<int> digits = new List<int>();
@@ -183,6 +216,46 @@ public class doubleExpertScript : MonoBehaviour
 
         return cnt;
     }
+
+	int GetAlphaPositionSun()
+	{
+		IEnumerable<char> sn = bomb.GetSerialNumberLetters();
+		int sum = 0;
+
+		foreach(char letter in sn)
+			sum += (int)letter - 64;
+
+		return sum;
+	}
+
+	int GetVowelNumber()
+	{
+		IEnumerable<char> sn = bomb.GetSerialNumberLetters();
+		int cnt = 0;
+
+		foreach(char letter in sn)
+		{
+			if(qi.vowels.Contains(letter)) 
+				cnt++;
+		}
+
+		return cnt;
+	}
+
+	int CalcDigitalRoot(int value) 
+	{
+		do {
+			int result = 0;
+
+			for (; value > 9; value /= 10)
+			result += value % 10;
+
+			value = result + value;
+		}
+		while (value > 9);
+
+		return value;
+	}
 
 	IEnumerator DisplaySet(int set)
 	{
