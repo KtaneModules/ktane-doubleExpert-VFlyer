@@ -143,7 +143,7 @@ class Condition
         {
             case Port.DVI: return (type ? "a " : "") + "DVI-D";
             case Port.PS2: return (type ? "a " : "") + "PS/2";
-            case Port.Parallel: return (type ? "a " : "") + "Parrallel";
+            case Port.Parallel: return (type ? "a " : "") + "Parallel";
             case Port.RJ45: return (type ? "an " : "") + "RJ-45";
             case Port.Serial: return (type ? "a " : "") + "Serial";
             case Port.StereoRCA: return (type ? "a " : "") + "Stereo RCA";
