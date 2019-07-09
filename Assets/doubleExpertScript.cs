@@ -560,7 +560,7 @@ public class doubleExpertScript : MonoBehaviour
 	IEnumerator SolveAnim()
 	{
         Audio.PlaySoundAtTransform("spark", transform);
-        Audio.PlaySoundAtTransform("shutdown", transform);
+        Audio.PlaySoundAtTransform("solve", transform);
 
 		yield return new WaitForSeconds(0.5f);
 		screenObj.SetActive(false);

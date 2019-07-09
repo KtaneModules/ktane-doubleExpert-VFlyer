@@ -16,9 +16,9 @@ MonoBehaviour:
   description: "Experience the feeling of both side of the team!\n\r\nModule by Kusane\r\nImplemented
     by TheThirdMan\r\nmoduleID: doubleExpert\n\r\nManual HTML: https://ktane.timwi.de/HTML/Double%20Expert.html\r\nManual
     PDF: https://ktane.timwi.de/PDF/Double%20Expert.pdf\r\n\r\nGitHub Repository:
-    https://github.com/luisdiogo98/ktane-symbolicColouring\r\n\r\nAny problems/suggestions,
+    https://github.com/luisdiogo98/ktane-doubleExpert\n\r\nAny problems/suggestions,
     feel free to contact me on the KTaNE Discord @TheThirdMan. Join the KTaNE Discord
     here: https://discord.gg/Fv7YEDj"
   version: 1.0
   outputFolder: build
-  previewImage: {fileID: 0}
+  previewImage: {fileID: 2800000, guid: f5db63118d5170942b77da32e413ffbf, type: 3}
