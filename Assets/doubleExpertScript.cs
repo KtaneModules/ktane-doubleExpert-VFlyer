@@ -591,15 +591,18 @@ public class doubleExpertScript : MonoBehaviour
     //twitch plays
     private bool isInputValid(string sn)
     {
-        if (!keywords.Contains(sn))
+        foreach (string s in keywords)
         {
-            return false;
+            if (s.EqualsIgnoreCase(sn))
+            {
+                return true;
+            }
         }
-        return true;
+        return false;
     }
 
     #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"!{0} prev/previous [Presses the button 'previous'] | !{0} next [Presses the button 'next'] | !{0} toggle [Flips the switch] | !{0} toggle <word> [Flips the switch at the specified word, words are Case-Sensitive (Will press 'next' at word if corresponding quirk rule applies)] | !{0} reset [Resets the module, ENTIRELY (new numbers/sets)]";
+    private readonly string TwitchHelpMessage = @"!{0} prev/previous [Presses the button 'previous'] | !{0} next [Presses the button 'next'] | !{0} toggle [Flips the switch] | !{0} toggle <word> [Flips the switch at the specified word (Will press 'next' at word if corresponding quirk rule applies)] | !{0} reset [Resets the module, ENTIRELY (new numbers/sets)]";
     #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
