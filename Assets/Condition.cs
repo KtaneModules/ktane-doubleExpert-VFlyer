@@ -106,7 +106,7 @@ class Condition
             case 12: return bomb.GetStrikes() % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
             case 13: return moreLess == 0 ? bomb.GetSolvedModuleNames().Count() > (bomb.GetSolvableModuleNames().Count - bomb.GetSolvedModuleNames().Count()) : bomb.GetSolvedModuleNames().Count() < (bomb.GetSolvableModuleNames().Count - bomb.GetSolvedModuleNames().Count());
             case 14: return qi.startTime % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
-            case 15: return moreLess == 0 ? qi.startTime > 50 : qi.startTime < 50;
+            case 15: return moreLess == 0 ? qi.startTime > 30 : qi.startTime < 30;
             case 16: return bomb.GetModuleNames().Count() % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
             case 17: return moreLess == 0 ? bomb.GetModuleNames().Count() > 15 : bomb.GetModuleNames().Count() < 15;
             case 18: return (lettersDigits == 0 ? bomb.GetSerialNumberLetters().Count() : bomb.GetSerialNumberNumbers().Count()) % 2 == (evenOdd == 0 ? qi.evenRemainder : (qi.evenRemainder - 1) * -1);
