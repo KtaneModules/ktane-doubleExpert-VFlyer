@@ -24,7 +24,7 @@ class QuirkInfo
         int cnt = 0;
         Debug.LogFormat("[Double Expert #{0}] ------------Quirks------------", moduleId);
 
-        if(bomb.GetIndicators().Count() >= 3)
+        if(bomb.GetIndicators().Count() >= 3 && bomb.GetOffIndicators().Count() == 0)
         {
             cnt++;
             vowels.Add('W');
