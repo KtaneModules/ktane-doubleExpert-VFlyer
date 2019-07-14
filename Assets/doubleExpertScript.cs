@@ -46,13 +46,18 @@ public class doubleExpertScript : MonoBehaviour
 
     void Awake()
     {
-        startTime = (int)(bomb.GetTime() / 60);
-        day = DateTime.Now.DayOfWeek;
-
         moduleId = moduleIdCounter++;
+        GetComponent<KMBombModule>().OnActivate += Activate;
+
         switchBtn.OnInteract += delegate () { FlipSwitch(); return false; };
         btns[0].OnInteract += delegate () { PrevSet(); return false; };
         btns[1].OnInteract += delegate () { NextSet(); return false; };
+    }
+
+    void Activate()
+    {
+        startTime = (int)(bomb.GetTime() / 60);
+        day = DateTime.Now.DayOfWeek;
     }
 
     void FlipSwitch()
