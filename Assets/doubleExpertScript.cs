@@ -5,13 +5,12 @@ using System.Linq;
 using UnityEngine;
 using KModkit;
 using System.Text.RegularExpressions;
+using rnd = UnityEngine.Random;
 
 public class doubleExpertScript : MonoBehaviour
 {
     public KMBombInfo bomb;
     public KMAudio Audio;
-
-    static System.Random rnd = new System.Random();
 
     public KMSelectable[] btns;
     public KMSelectable switchBtn;
@@ -113,7 +112,7 @@ public class doubleExpertScript : MonoBehaviour
 
         screenObj.transform.GetComponentInChildren<Renderer>().material = screenColors[0];
 
-        keyNumber = rnd.Next() % 40 + 30;
+        keyNumber = rnd.Range(0, 40) + 30;
 
         Debug.LogFormat("[Double Expert #{0}] ------------Instruction Sets------------", moduleId);
 
@@ -262,7 +261,7 @@ public class doubleExpertScript : MonoBehaviour
 
     void GenerateInstructionSets()
     {
-        keyNumber = rnd.Next() % 40 + 30;
+        keyNumber = rnd.Range(0, 40) + 30;
 
         sets = new InstructionSet[7];
 
@@ -283,7 +282,7 @@ public class doubleExpertScript : MonoBehaviour
     char GetRandomChar()
     {
         char[] chars = new char[] { '|', '\\', '!', '"', '@', '#', '£', '$', '§', '%', '&', '/', '{', '(', '[', ')', ']', '=', '}', '?', '\'', '»', '«', '<', '>', '€', ',', ';', '.', ':', '-', '_', '*', '+' };
-        return chars[rnd.Next() % chars.Length];
+        return chars[rnd.Range(0, chars.Length)];
     }
 
     bool CheckRule(char rule)
@@ -452,7 +451,7 @@ public class doubleExpertScript : MonoBehaviour
 
         Debug.LogFormat("[Double Expert #{0}] Correct keyword is {1}.", moduleId, correct);
 
-        keywords = keywords.OrderBy(x => rnd.Next()).ToList();
+        keywords = keywords.OrderBy(x => rnd.Range(0, 1000)).ToList();
         correctKeyword = keywords.IndexOf(correct);
         keywordLoop = StartCoroutine(KeywordLoop(keywords));
     }
@@ -461,15 +460,15 @@ public class doubleExpertScript : MonoBehaviour
     {
         List<String> ret = new List<string>();
 
-        ret.Add(new String[] { "Apple", "Delta", "Greek", "Juliett", "Maniac", "Papa", "Single", "Victor", "X-ray", "YMCA", "Zulu" }.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
-        ret.Add(new String[] { "Alpha", "Diamond", "Golf", "Jenga", "Mike", "Pope", "Sierra", "Vow", "Xbox", "Yo-Yo", "Zebra" }.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
-        ret.Add(new String[] { "Banana", "Echo", "Hawaii", "Kilo", "Nutmeg", "Quebec", "Triple", "Violet", "X-file", "Ygor", "Zapra" }.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
-        ret.Add(new String[] { "Beta", "Emerald", "Hotel", "Kenya", "November", "Quiet", "Tango", "Vent Gas", "Xcitebike", "Yeet", "Zebstrika" }.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
-        ret.Add(new String[] { "Cherry", "Foxtrot", "Indigo", "Lima", "Otto", "Romeo", "Ultimate", "Whiskey", "X-men", "Yippy", "Zenoblade" }.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
-        ret.Add(new String[] { "Charlie", "Fluorite", "India", "Lingerie", "Oscar", "Rodeo", "Uniform", "Wires", "X-mas", "Yes", "Zelda" }.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
-        ret.Add(new String[] { "Back", "Define", "High", "Jackal", "Monsplode", "Quiper", "Stunt", "Words", "Xenoblade", "YoVile", "Zen Mode" }.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
-        ret.Add(new String[] { "Cabin", "FedEx", "Gothi", "Kojima", "Nominate", "Prequire", "Tuesday", "Wii", "X01", "Yankee", "Zoo" }.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
-        ret.Add(new String[] { "Chocolate", "Diadem", "Half", "Jakarta", "Not", "Rope", "Thursday", "Warsaw", "X", "Yodeling", "Zero" }.ToList().OrderBy(x => rnd.Next()).ElementAt(0));
+        ret.Add(new String[] { "Apple", "Delta", "Greek", "Juliett", "Maniac", "Papa", "Single", "Victor", "X-ray", "YMCA", "Zulu" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
+        ret.Add(new String[] { "Alpha", "Diamond", "Golf", "Jenga", "Mike", "Pope", "Sierra", "Vow", "Xbox", "Yo-Yo", "Zebra" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
+        ret.Add(new String[] { "Banana", "Echo", "Hawaii", "Kilo", "Nutmeg", "Quebec", "Triple", "Violet", "X-file", "Ygor", "Zapra" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
+        ret.Add(new String[] { "Beta", "Emerald", "Hotel", "Kenya", "November", "Quiet", "Tango", "Vent Gas", "Xcitebike", "Yeet", "Zebstrika" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
+        ret.Add(new String[] { "Cherry", "Foxtrot", "Indigo", "Lima", "Otto", "Romeo", "Ultimate", "Whiskey", "X-men", "Yippy", "Zenoblade" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
+        ret.Add(new String[] { "Charlie", "Fluorite", "India", "Lingerie", "Oscar", "Rodeo", "Uniform", "Wires", "X-mas", "Yes", "Zelda" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
+        ret.Add(new String[] { "Back", "Define", "High", "Jackal", "Monsplode", "Quiper", "Stunt", "Words", "Xenoblade", "YoVile", "Zen Mode" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
+        ret.Add(new String[] { "Cabin", "FedEx", "Gothi", "Kojima", "Nominate", "Prequire", "Tuesday", "Wii", "X01", "Yankee", "Zoo" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
+        ret.Add(new String[] { "Chocolate", "Diadem", "Half", "Jakarta", "Not", "Rope", "Thursday", "Warsaw", "X", "Yodeling", "Zero" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
 
         return ret;
     }
@@ -499,7 +498,7 @@ public class doubleExpertScript : MonoBehaviour
         {
             for (int j = 0; j < words[i].Length; j++)
             {
-                if (rnd.Next() % 12 < prob)
+                if (rnd.Range(0, 12) < prob)
                 {
                     char[] chars = words[i].ToCharArray();
                     chars[j] = GetRandomChar();
@@ -544,7 +543,7 @@ public class doubleExpertScript : MonoBehaviour
 
             for (int j = 0; j < kw.Length; j++)
             {
-                if (rnd.Next() % 6 < sets.Length - latestInstructionSet - 1)
+                if (rnd.Range(0, 6) < sets.Length - latestInstructionSet - 1)
                 {
                     char[] chars = kw.ToCharArray();
                     chars[j] = GetRandomChar();

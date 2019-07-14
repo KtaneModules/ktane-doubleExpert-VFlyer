@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using KModkit;
+using rnd = UnityEngine.Random;
 
 class LetterAlt
 {
@@ -13,11 +14,9 @@ class LetterAlt
 
     KMBombInfo bomb;
 
-    static System.Random rnd = new System.Random();
-
     public LetterAlt(KMBombInfo bomb, QuirkInfo qi)
     {
-        rule = rnd.Next() % 8;
+        rule = rnd.Range(0, 8);
         this.bomb = bomb;
 
         switch(rule)
@@ -25,7 +24,7 @@ class LetterAlt
             case 0:
             {
                 IEnumerable<char> letters = bomb.GetSerialNumberLetters();
-                int index = rnd.Next() % letters.Count();
+                int index = rnd.Range(0, letters.Count());
 
                 letter = letters.ElementAt(index);
                 text = "Apply the rule that corresponds to the " + GetOrdinal(index + 1) + " letter of the Serial Number.";
@@ -64,7 +63,7 @@ class LetterAlt
                 List<char> letters = bomb.GetSerialNumberLetters().ToList();
                 letters.Sort();
 
-                if(rnd.Next() % 2 == 0)
+                if(rnd.Range(0, 2) == 0)
                 {
                     letter = letters.ElementAt(0);
                     text = "Apply the rule that corresponds to the letter of the Serial Number that comes first alphabetically.";
@@ -91,7 +90,7 @@ class LetterAlt
                 List<String> names = bomb.GetModuleNames();
                 names.Sort();
 
-                if(rnd.Next() % 2 == 0)
+                if(rnd.Range(0, 2) == 0)
                 {
                     letter = names.ElementAt(0)[0];
                     text = "Apply the rule that corresponds to the first character of the name of the module on the bomb that comes first alphabetically (if such rule exists).";

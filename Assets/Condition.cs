@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using KModkit;
+using rnd = UnityEngine.Random;
 
 class Condition
 {
-    static System.Random rnd = new System.Random();
-
     int rule;
 
     KMBombInfo bomb;
@@ -35,20 +34,20 @@ class Condition
         this.bomb = bomb;
         this.qi = qi;
 
-        rule = rnd.Next() % 27;
+        rule = rnd.Range(0, 27);
         SetRandomPort();
         SetRandomIndicator();
         SetRandomWord();
-        widgetType1 = rnd.Next() % 3;
-        do {widgetType2 = rnd.Next() % 3;} while(widgetType1 == widgetType2);
-        batteryType1 = rnd.Next() % 2;
+        widgetType1 = rnd.Range(0, 3);
+        do {widgetType2 = rnd.Range(0, 3);} while(widgetType1 == widgetType2);
+        batteryType1 = rnd.Range(0, 2);
         batteryType2 = batteryType1 == 1 ? 0 : 1;
-        indicatorType1 = rnd.Next() % 2;
+        indicatorType1 = rnd.Range(0, 2);
         indicatorType2 = indicatorType1 == 1 ? 0 : 1;
-        evenOdd = rnd.Next() % 2;
-        moreLess = rnd.Next() % 2;
-        lettersDigits = rnd.Next() % 2;
-        vowelPrime = rnd.Next() % 2;
+        evenOdd = rnd.Range(0, 2);
+        moreLess = rnd.Range(0, 2);
+        lettersDigits = rnd.Range(0, 2);
+        vowelPrime = rnd.Range(0, 2);
 
         switch(rule)
         {
@@ -125,7 +124,7 @@ class Condition
 
     void SetRandomPort()
     {
-        switch(rnd.Next() % 6)
+        switch(rnd.Range(0, 6))
         {
             case 0: port = Port.DVI; break;
             case 1: port = Port.PS2; break; 
@@ -154,7 +153,7 @@ class Condition
 
     void SetRandomIndicator()
     {
-        switch(rnd.Next() % 11)
+        switch(rnd.Range(0, 11))
         {
             case 0: indicator = Indicator.BOB; break;  
             case 1: indicator = Indicator.CAR; break;
@@ -192,7 +191,7 @@ class Condition
 
     void SetRandomWord()
     {
-        switch(rnd.Next() % 13)
+        switch(rnd.Range(0, 13))
         {
             case 0: word = "BOMB"; break;
             case 1: word = "EXPERT"; break;
