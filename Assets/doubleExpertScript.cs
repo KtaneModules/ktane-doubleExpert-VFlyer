@@ -25,6 +25,7 @@ public class doubleExpertScript : MonoBehaviour
     int moduleId;
     private bool moduleSolved = false;
 
+    bool awoken = false;
     bool submiting = false;
     List<String> keywords;
     int currentKeyowrd = 0;
@@ -58,10 +59,18 @@ public class doubleExpertScript : MonoBehaviour
     {
         startTime = (int)(bomb.GetTime() / 60);
         day = DateTime.Now.DayOfWeek;
+        CheckQuirks();
+        GenerateInstructionSets();
+        screenObj.transform.GetComponentInChildren<Renderer>().gameObject.SetActive(true);
+        setDisplay = StartCoroutine(DisplaySet(currentInstructionSet));
+        awoken = true;
     }
 
     void FlipSwitch()
     {
+        if(!awoken)
+            return;
+
         switchBtn.AddInteractionPunch(.5f);
         switchObj.transform.Rotate(0, 180f, 0);
         Audio.PlaySoundAtTransform("switch", transform);
@@ -135,6 +144,9 @@ public class doubleExpertScript : MonoBehaviour
 
     void PrevSet()
     {
+        if(!awoken)
+            return;
+
         GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
         btns[0].AddInteractionPunch(.5f);
 
@@ -154,6 +166,9 @@ public class doubleExpertScript : MonoBehaviour
 
     void NextSet()
     {
+        if(!awoken)
+            return;
+
         GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
         btns[1].AddInteractionPunch(.5f);
 
@@ -254,9 +269,7 @@ public class doubleExpertScript : MonoBehaviour
 
     void Start()
     {
-        CheckQuirks();
-        GenerateInstructionSets();
-        setDisplay = StartCoroutine(DisplaySet(currentInstructionSet));
+        screenObj.transform.GetComponentInChildren<Renderer>().gameObject.SetActive(false);
     }
 
     void CheckQuirks()
@@ -638,9 +651,26 @@ public class doubleExpertScript : MonoBehaviour
         string[] parameters = command.Split(' ');
         if (Regex.IsMatch(parameters[0], @"^\s*toggle\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
-            if(parameters.Length == 2)
+            if(parameters.Length == 2 || parameters.Length == 3)
             {
-                if (isInputValid(parameters[1]))
+                if(parameters.Length == 3)
+                {
+                    string builder = parameters[1]+" "+parameters[2];
+                    if((builder.EqualsIgnoreCase("Vent Gas") && isInputValid(builder)) || (builder.EqualsIgnoreCase("Zen Mode") && isInputValid(builder)))
+                    {
+                        yield return null;
+                        while (!keywords[currentKeyowrd].EqualsIgnoreCase(builder)) yield return "trycancel The switch wasn't flipped due to a request to cancel.";
+                        if (qi.nextIsSwitch)
+                        {
+                            btns[1].OnInteract();
+                        }
+                        else
+                        {
+                            switchBtn.OnInteract();
+                        }
+                    }
+                }
+                else if (isInputValid(parameters[1]))
                 {
                     yield return null;
                     while (!keywords[currentKeyowrd].EqualsIgnoreCase(parameters[1])) yield return "trycancel The switch wasn't flipped due to a request to cancel.";
