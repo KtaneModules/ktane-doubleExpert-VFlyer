@@ -131,7 +131,10 @@ class InstructionSet
         if(CheckCondition(keyNumber))
         {
             if(runtimeLetter)
+            {
+                trueRules = new List<char>();
                 trueRules.Add(letter.GetLetter(keyNumber));
+            }
             return trueRules;
         }
         else return falseRules;
