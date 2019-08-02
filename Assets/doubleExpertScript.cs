@@ -653,6 +653,11 @@ public class doubleExpertScript : MonoBehaviour
         {
             if(parameters.Length == 2 || parameters.Length == 3)
             {
+                if(submiting != true)
+                {
+                    yield return "sendtochaterror I haven't got any words to toggle at yet!";
+                    yield break;
+                }
                 if(parameters.Length == 3)
                 {
                     string builder = parameters[1]+" "+parameters[2];
