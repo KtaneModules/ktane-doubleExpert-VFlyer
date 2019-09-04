@@ -692,8 +692,9 @@ public class doubleExpertScript : MonoBehaviour
                 {
                     if(currentInstructionSet < sets.Length-1)
                     {
+                        yield return "sendtochat That word does not appear in the cycle of words! Because of an early flip, the unsubmittable penalty was applied.";
                         yield return "unsubmittablepenalty";
-                        yield return "That word does not appear in the cycle of words! Because of an early flip, the unsubmittable penalty was applied.";                    }
+                    }
                     else
                     {
                         yield return "sendtochat That word does not appear in the cycle of words!";
