@@ -139,6 +139,7 @@ public class doubleExpertScript : MonoBehaviour
 
         currentInstructionSet = 0;
         latestInstructionSet = 0;
+        appliedRules = new List<char>();
         setDisplay = StartCoroutine(DisplaySet(currentInstructionSet));
     }
 
