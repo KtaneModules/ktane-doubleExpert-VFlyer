@@ -39,7 +39,7 @@ class QuirkInfo
             Debug.LogFormat("[Double Expert #{0}] Quirk 2 applies.", moduleId);
         }
 
-        if(bomb.GetSerialNumberLetters().Contains('Y') || bomb.GetSerialNumberLetters().Contains('Z'))
+        if(bomb.GetSerialNumberLetters().Contains('X') || bomb.GetSerialNumberLetters().Contains('Z'))
         {
             cnt++;
             evenRemainder = 1;

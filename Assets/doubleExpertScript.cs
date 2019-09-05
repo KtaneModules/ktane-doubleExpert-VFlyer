@@ -318,7 +318,7 @@ public class doubleExpertScript : MonoBehaviour
             case 'F': return bomb.IsPortPresent(Port.StereoRCA) && qi.portCondition;
             case 'G': return appliedRules.Count() != 1 ? qi.vowels.Contains(appliedRules.ElementAt(appliedRules.Count() - 2)) : false;
             case 'H': return keyNumber > 11 || qi.mayNinth;
-            case 'I': return bomb.IsIndicatorPresent(Indicator.BOB) || qi.mayNinth;
+            case 'I': return bomb.IsIndicatorOn(Indicator.BOB) || qi.mayNinth;
             case 'J': return day == DayOfWeek.Wednesday;
             case 'K': return bomb.GetSolvedModuleNames().Count() < 6;
             case 'L': return Math.Abs(keyNumber) % 2 == qi.evenRemainder;
