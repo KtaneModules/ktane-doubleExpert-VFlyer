@@ -56,9 +56,9 @@ class Condition
             case 2: text = "If the bomb has more " + GetBatteryName(batteryType1) + " than " + GetBatteryName(batteryType2) +", "; break;
             case 3: text = "If the bomb has more " + GetIndicatorType(indicatorType1) + " than " + GetIndicatorType(indicatorType2) +", "; break;
             case 4: text = "If the sum of all the Serial Number digits is " + (evenOdd == 0 ? "even" : "odd") + ", "; break;
-            case 5: text = "If the sum of all the Serial Number digits is " + (moreLess == 0 ? "more than 15" : "less that 15") + ", "; break;
+            case 5: text = "If the sum of all the Serial Number digits is " + (moreLess == 0 ? "more than 15" : "less than 15") + ", "; break;
             case 6: text = "If the current Key Number is " + (evenOdd == 0 ? "even" : "odd") + ", "; break;
-            case 7: text = "If the current Key Number is " + (moreLess == 0 ? "more than 50" : "less that 50") + ", "; break;
+            case 7: text = "If the current Key Number is " + (moreLess == 0 ? "more than 50" : "less than 50") + ", "; break;
             case 8: text = "If there are 3 or " + (moreLess == 0 ? "more " : "less ") + GetWidgetName(widgetType1) + " on the bomb, "; break;
             case 9: text = "If the number of " + GetWidgetName(widgetType1) + " on the bomb is " + (evenOdd == 0 ? "even" : "odd") + ", "; break;
             case 10: text = "If there are more " + GetPortName(false) + " ports than any other port type, "; break;
@@ -191,22 +191,12 @@ class Condition
 
     void SetRandomWord()
     {
-        switch(rnd.Range(0, 13))
-        {
-            case 0: word = "BOMB"; break;
-            case 1: word = "EXPERT"; break;
-            case 2: word = "STRIKE"; break;
-            case 3: word = "MANUAL"; break;
-            case 4: word = "SWITCH"; break;
-            case 5: word = "FLIP"; break;
-            case 6: word = "NEXT"; break;
-            case 7: word = "PREVIOUS"; break;
-            case 8: word = "QUIRK"; break;
-            case 9: word = "KEYWORD"; break;
-            case 10: word = "RULE"; break;
-            case 11: word = "SCREEN"; break;
-            case 12: word = "DOUBLE"; break;
-        }
+        string[] wordBank = new string[] { "BOMB", "EXPERT", "STRIKE", "MANUAL", "SWITCH",
+            "FLIP", "NEXT", "PREVIOUS", "QUIRK", "KEYWORD",
+            "RULE", "SCREEN", "DOUBLE", "THIRD", "MAN",
+            "FALSE", "TRUE", "GLITCH", "DEFUSE", "SOLVE",
+            "ABOVE", "BELOW", "NUMBER", "PORT", "TRIPLE" };
+        word = wordBank[rnd.Range(0, wordBank.Length)];
     }
 
     String GetWidgetName(int widgetType)
