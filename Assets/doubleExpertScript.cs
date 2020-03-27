@@ -127,7 +127,6 @@ public class doubleExpertScript : MonoBehaviour
         screenObj.transform.GetComponentInChildren<Renderer>().material = screenColors[0];
 
         keyNumber = rnd.Range(0, 40) + 30;
-
         Debug.LogFormat("[Double Expert #{0}] ------------Instruction Sets------------", moduleId);
 
         sets[0] = new KeyNumberSet(keyNumber);
@@ -150,7 +149,7 @@ public class doubleExpertScript : MonoBehaviour
 
         GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
         btns[0].AddInteractionPunch(.5f);
-
+        StartCoroutine(HandleButtonAnim(btns[0].gameObject));
         if (moduleSolved)
             return;
 
@@ -172,7 +171,7 @@ public class doubleExpertScript : MonoBehaviour
 
         GetComponent<KMAudio>().PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
         btns[1].AddInteractionPunch(.5f);
-
+        StartCoroutine(HandleButtonAnim(btns[1].gameObject));
         if (moduleSolved)
             return;
 
@@ -474,7 +473,22 @@ public class doubleExpertScript : MonoBehaviour
         correctKeyword = keywords.IndexOf(correct);
         keywordLoop = StartCoroutine(KeywordLoop(keywords));
     }
-    
+
+    IEnumerator HandleButtonAnim(GameObject anim) // Animate the buttons
+    {
+        for (int x = 0; x < 5; x++)
+        {
+            anim.transform.localPosition += Vector3.down / 500;
+            yield return new WaitForSeconds(0);
+        }
+        for (int x = 0; x < 5; x++)
+        {
+            anim.transform.localPosition += Vector3.up / 500;
+            yield return new WaitForSeconds(0);
+        }
+        yield break;
+    }
+
     List<string> GetRandomKeywords()
     {
         List<string> ret = new List<string>();
@@ -587,7 +601,7 @@ public class doubleExpertScript : MonoBehaviour
         for (int x = 0; x < delayTimes.Length; x++)
         {
             yield return new WaitForSeconds(delayTimes[x]);
-            screenObj.SetActive(x%2 != 0);
+            screenObj.SetActive(x % 2 != 0);
         }
     }
 
@@ -606,12 +620,24 @@ public class doubleExpertScript : MonoBehaviour
 
     IEnumerator HandleForceSolve()
     {
-        if (!submiting)
+        if (!(submiting || qi.nextIsSwitch)) // Quirk 5 condition
             switchBtn.OnInteract();
+        else
+            while (!submiting)
+            {
+                btns[1].OnInteract();
+                yield return new WaitForSeconds(0.1f);
+            }
+        if (moduleSolved) yield break; // Unicorn Rule, AKA April 9th. Quirk 7.
         do
+        {
             yield return new WaitForSeconds(0);
+        }
         while (currentKeyword != correctKeyword);
-        switchBtn.OnInteract();
+        if (!qi.nextIsSwitch) // Quirk 5 condition
+            switchBtn.OnInteract();
+        else
+            btns[1].OnInteract();
         yield return null;
     }
 
@@ -622,7 +648,7 @@ public class doubleExpertScript : MonoBehaviour
     }
 
     #pragma warning disable 414
-    private readonly string TwitchHelpMessage = "To press the \"previous\" button: \"!{0} prev\" or \"!{0} previous\", To press the \"next\" button: \"!{0} next\",\n"+
+    private readonly string TwitchHelpMessage = "To press the \"previous\" button: \"!{0} prev\" or \"!{0} previous\", To press the \"next\" button: \"!{0} next\", \"Press\" is optional.\n"+
         "To flip/toggle the switch any time: \"!{0} toggle\" or \"!{0} flip\", To flip/toggle the switch on a specific keyword: \"!{0} toggle <word>\" or \"!{0} flip <word>\" This will press 'next' at the given word if corresponding quirk rule applies.\n"+
         "To start over or to reset the module ENTIRELY: \"!{0} reset\" or \"!{0} restart\" This WILL create new numbers and/or sets upon using this command!";
     #pragma warning restore 414
@@ -636,13 +662,13 @@ public class doubleExpertScript : MonoBehaviour
             Debug.LogFormat("[Double Expert #{0}] A reset has been issued viva TP handler.", moduleId);
             RestartModule();
         }
-        else if (command.RegexMatch(@"^prev(ious)?$"))
+        else if (command.RegexMatch(@"^(press )?prev(ious)?$"))
         {
             yield return null;
             btns[0].OnInteract();
             yield break;
         }
-        else if (command.RegexMatch(@"^next$"))
+        else if (command.RegexMatch(@"^(press )?next$"))
         {
             yield return null;
             btns[1].OnInteract();
