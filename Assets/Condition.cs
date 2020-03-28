@@ -13,11 +13,11 @@ class Condition
     KMBombInfo bomb;
     QuirkInfo qi;
 
-    String text;
+    string text;
 
     Port port;
     Indicator indicator;
-    String word;
+    string word;
     int widgetType1;
     int widgetType2;
     int batteryType1;
@@ -28,18 +28,18 @@ class Condition
     int moreLess;
     int lettersDigits;
     int vowelPrime;
-
+    int maxSModuleCount, selectedModCount;
     public Condition(KMBombInfo bomb, QuirkInfo qi)
     {
         this.bomb = bomb;
         this.qi = qi;
 
-        rule = rnd.Range(0, 27);
+        rule = rnd.Range(0, 28);
         SetRandomPort();
         SetRandomIndicator();
         SetRandomWord();
         widgetType1 = rnd.Range(0, 3);
-        do {widgetType2 = rnd.Range(0, 3);} while(widgetType1 == widgetType2);
+        do { widgetType2 = rnd.Range(0, 3); } while (widgetType1 == widgetType2);
         batteryType1 = rnd.Range(0, 2);
         batteryType2 = batteryType1 == 1 ? 0 : 1;
         indicatorType1 = rnd.Range(0, 2);
@@ -48,8 +48,10 @@ class Condition
         moreLess = rnd.Range(0, 2);
         lettersDigits = rnd.Range(0, 2);
         vowelPrime = rnd.Range(0, 2);
+        maxSModuleCount = bomb.GetSolvableModuleNames().Count();
+        selectedModCount = rnd.Range(0, maxSModuleCount);
 
-        switch(rule)
+        switch (rule)
         {
             case 0: text = "If the bomb contains " + GetPortName(true) + " port, "; break;
             case 1: text = "If the bomb has more " + GetWidgetName(widgetType1) + " than " + GetWidgetName(widgetType2) +", "; break;
@@ -77,11 +79,13 @@ class Condition
             case 23: text = "If the bomb has duplicate ports, "; break;
             case 24: text = "If there are no " + GetWidgetName(widgetType1) + " on the bomb, "; break;
             case 25: text = "If the Serial Number contains a " + (vowelPrime == 0 ? "vowel" : "prime digit") + ", "; break;
-            case 26: text = "If the number of solved modules on the bomb is " + (moreLess == 0 ? "more than" : "less than") + " " + bomb.GetSolvableModuleNames().Count() / 2 + ", "; break;
+            case 26: text = "If the number of solved modules on the bomb is " + (moreLess == 0 ? "more than" : "less than") + " " + selectedModCount + ", "; break;
+            case 27: text = "If the number of unsolved modules on the bomb is " + (moreLess == 0 ? "more than" : "less than") + " " + selectedModCount + ", "; break;
+            default: text = "If this is a Double Expert module, "; break;
         }
     }
 
-    public String GetText()
+    public string GetText()
     {
         return text;
     }
@@ -116,16 +120,16 @@ class Condition
             case 23: return (GetGreatestPortCount() > 1) && qi.portCondition;
             case 24: return (GetWidgetCount(widgetType1) == 0) && (widgetType1 != 2 || qi.portCondition);
             case 25: return vowelPrime == 0 ? bomb.GetSerialNumber().IndexOfAny(qi.vowels.ToArray()) != -1 : bomb.GetSerialNumber().IndexOfAny(new char[] {'2', '3', '5', '7'}) != -1;
-            case 26: return moreLess == 0 ? bomb.GetSolvedModuleNames().Count() > (bomb.GetSolvableModuleNames().Count / 2) : bomb.GetSolvedModuleNames().Count() < (bomb.GetSolvableModuleNames().Count / 2);
+            case 26: return moreLess == 0 ? bomb.GetSolvedModuleNames().Count() > selectedModCount : bomb.GetSolvedModuleNames().Count() < selectedModCount;
+            case 27: return moreLess == 0 ? bomb.GetSolvableModuleNames().Count() - bomb.GetSolvedModuleNames().Count() > selectedModCount : bomb.GetSolvableModuleNames().Count() - bomb.GetSolvedModuleNames().Count() < selectedModCount;
+            default: return true;
         }
-
-        return true;
     }
 
     void SetRandomPort()
     {
         switch(rnd.Range(0, 6))
-        {
+        {// Note: This sets a random vanilla port, NOT a modded port.
             case 0: port = Port.DVI; break;
             case 1: port = Port.PS2; break; 
             case 2: port = Port.Parallel; break;
@@ -136,7 +140,7 @@ class Condition
 
     }
 
-    String GetPortName(bool type)
+    string GetPortName(bool type)
     {
         switch(port)
         {
@@ -154,7 +158,7 @@ class Condition
     void SetRandomIndicator()
     {
         switch(rnd.Range(0, 11))
-        {
+        {// Sets a vanilla indicator, NOT modded.
             case 0: indicator = Indicator.BOB; break;  
             case 1: indicator = Indicator.CAR; break;
             case 2: indicator = Indicator.CLR; break;
@@ -169,7 +173,7 @@ class Condition
         }
     }
 
-    String GetIndicatorName()
+    string GetIndicatorName()
     {
         switch(indicator)
         {
@@ -199,7 +203,7 @@ class Condition
         word = wordBank[rnd.Range(0, wordBank.Length)];
     }
 
-    String GetWidgetName(int widgetType)
+    string GetWidgetName(int widgetType)
     {
         switch(widgetType)
         {
@@ -211,7 +215,7 @@ class Condition
         return "";
     }
 
-    String GetBatteryName(int batteryType)
+    string GetBatteryName(int batteryType)
     {
         switch(batteryType)
         {
@@ -222,7 +226,7 @@ class Condition
         return "";
     }
 
-    String GetIndicatorType(int indicatorType)
+    string GetIndicatorType(int indicatorType)
     {
         switch(indicatorType)
         {

@@ -12,169 +12,140 @@ class LetterAlt
     char letter;
     string text;
     bool compactList = rnd.value < .5;
-
-    KMBombInfo bomb;
+    private KMBombInfo bomb;
 
     public LetterAlt(KMBombInfo bomb, QuirkInfo qi)
     {
         rule = rnd.Range(0, 10);
         this.bomb = bomb;
         IEnumerable<char> letters = bomb.GetSerialNumberLetters();
-        switch (rule)
+        try
         {
-            case 0:
-                {
-                    int index = rnd.Range(0, letters.Count());
-
-                    letter = letters.ElementAt(index);
-                    text = "Apply the rule corresponding to the " + GetOrdinal(index + 1) + " letter of the Serial Number.";
-                    break;
-                }
-            case 1:
-                {
-                    text = "Apply the rule corresponding to the Xth letter of the Serial Number, where X is the number of solved modules on the bomb, modulo the number of letters in the Serial Number, plus 1.";
-                    break;
-                }
-            case 2:
-                {
-                    text = "Apply the rule corresponding to the Xth letter of the Serial Number, where X is your current Key Number, modulo the number of letters in the Serial Number, plus 1.";
-                    break;
-                }
-            case 3:
-                {
-                    int index = bomb.GetSerialNumberNumbers().Sum() % letters.Count();
-
-                    letter = letters.ElementAt(index);
-                    text = "Apply the rule corresponding to the Xth letter of the Serial Number, where X is sum of all the Serial Number digits, modulo the number of letters in the Serial Number, plus 1.";
-                    break; 
-                }
-            case 4:
-                {
-                    int index = qi.startTime % letters.Count();
-
-                    letter = letters.ElementAt(index);
-                    text = "Apply the rule corresponding to the Xth letter of the Serial Number, where X is the bomb's starting time (whole minutes), modulo the number of letters in the Serial Number, plus 1.";
-                    break; 
-                }
-            case 5:
-                {
-                    List<char> sortedLetters = letters.ToList();
-                    sortedLetters.Sort();
-                    if(rnd.Range(0, 2) == 0)
+            switch (rule)
+            {
+                case 0:
                     {
-                        letter = sortedLetters.ElementAt(0);
-                        text = "Apply the rule corresponding to the letter of the Serial Number that comes " + GetOrdinal(1)+" alphabetically.";
+                        int index = rnd.Range(0, letters.Count());
+
+                        letter = letters.ElementAt(index);
+                        text = "Apply the rule corresponding to the " + GetOrdinal(index + 1) + " letter of the Serial Number.";
+                        break;
                     }
-                    else
+                case 1:
                     {
-                        letter = sortedLetters.ElementAt(letters.Count() - 1);
-                        text = "Apply the rule corresponding to the letter of the Serial Number that comes last alphabetically.";
+                        text = "Apply the rule corresponding to the Xth letter of the Serial Number, where X is the number of solved modules on the bomb, modulo the number of letters in the Serial Number, plus 1.";
+                        break;
                     }
+                case 2:
+                    {
+                        text = "Apply the rule corresponding to the Xth letter of the Serial Number, where X is your current Key Number, modulo the number of letters in the Serial Number, plus 1.";
+                        break;
+                    }
+                case 3:
+                    {
+                        int index = bomb.GetSerialNumberNumbers().Sum() % letters.Count();
 
-                    break;
-                }
-            case 6:
-                {
-                    int index = bomb.GetModuleNames().Count() % letters.Count();
+                        letter = letters.ElementAt(index);
+                        text = "Apply the rule corresponding to the Xth letter of the Serial Number, where X is sum of all the Serial Number digits, modulo the number of letters in the Serial Number, plus 1.";
+                        break;
+                    }
+                case 4:
+                    {
+                        int index = qi.startTime % letters.Count();
 
-                    letter = letters.ElementAt(index);
-                    text = "Apply the rule corresponding to the Xth letter of the Serial Number, where X is the number of modules on the bomb, modulo the number of letters in the Serial Number, plus 1.";
-                    break; 
-                }
-            case 7:
-                {
-                    List<string> names = bomb.GetModuleNames();
-                    names.Sort();
-                    if (names.Count > 0)
+                        letter = letters.ElementAt(index);
+                        text = "Apply the rule corresponding to the Xth letter of the Serial Number, where X is the bomb's starting time (whole minutes), modulo the number of letters in the Serial Number, plus 1.";
+                        break;
+                    }
+                case 5:
+                    {
+                        List<char> sortedLetters = letters.ToList();
+                        sortedLetters.Sort();
                         if (rnd.Range(0, 2) == 0)
                         {
-                            letter = names.ElementAt(0)[0];
-                            text = "Apply the rule corresponding to the 1st character of the name of the module on the bomb that comes " + GetOrdinal(1) + " alphabetically (if such rule exists).";
+                            letter = sortedLetters.ElementAt(0);
+                            text = "Apply the rule corresponding to the letter of the Serial Number that comes " + GetOrdinal(1) + " alphabetically.";
                         }
                         else
                         {
-                            letter = names.ElementAt(names.Count() - 1)[0];
-                            text = "Apply the rule corresponding to the 1st character of the name of the module on the bomb that comes last alphabetically (if such rule exists).";
+                            letter = sortedLetters.ElementAt(letters.Count() - 1);
+                            text = "Apply the rule corresponding to the letter of the Serial Number that comes last alphabetically.";
                         }
-                    else
-                    {// Implement failsafe to prevent an IndexOutOfBoundsException
-                        letter = ' ';
-                        text = "Apply no rule in this instruction. Literally.";
+
+                        break;
                     }
-                    break;
-                }
-            case 8:
-                {
-                    List<string> solvablenames = bomb.GetSolvableModuleNames().Where(a => a.RegexMatch(@"^[A-Z]|[a-z]")).ToList();
-                    solvablenames.Sort();
-                    if (solvablenames.Count > 0)
-                        if (rnd.Range(0, 2) == 0)
-                        {
-                            letter = solvablenames.ElementAt(0)[0];
-                            text = "Apply the rule corresponding to the 1st character of the name of the solvable module on the bomb that comes 1st alphabetically, excluding modules that start with digits or symbols.";
-                        }
+                case 6:
+                    {
+                        int[] possibleNums = new int[] { bomb.GetPortPlateCount(), bomb.GetPortCount(), bomb.GetBatteryHolderCount(), bomb.GetBatteryCount(), bomb.GetModuleNames().Count(), bomb.GetSolvableModuleNames().Count() };
+                        string[] possibleTexts = new string[] { "port plates", "ports", "battery holders", "batteries", "modules", "solvable modules" };
+                        int idx = rnd.Range(0, possibleNums.Length);
+                        letter = letters.ElementAt(possibleNums[idx] % letters.Count());
+                        text = "Apply the rule corresponding to the Xth letter of the Serial Number, where X is the number of " + possibleTexts[idx] + " on the bomb, modulo the number of letters in the Serial Number, plus 1.";
+                        break;
+                    }
+                case 7:
+                    {
+                        List<string> solvablenames = bomb.GetSolvableModuleNames().Where(a => a.RegexMatch(@"^[A-Z]|[a-z]")).ToList();
+                        solvablenames.Sort();
+                        if (solvablenames.Count > 0)
+                            if (rnd.Range(0, 2) == 0)
+                            {
+                                letter = solvablenames.ElementAt(0)[0];
+                                text = "Apply the rule corresponding to the 1st character of the name of the solvable module on the bomb that comes 1st alphabetically, excluding modules that start with digits or symbols.";
+                            }
+                            else
+                            {
+                                letter = solvablenames.ElementAt(solvablenames.Count() - 1)[0];
+                                text = "Apply the rule corresponding to the 1st character of the name of the solvable module on the bomb that comes last alphabetically, excluding modules that start with digits or symbols.";
+                            }
                         else
-                        {
-                            letter = solvablenames.ElementAt(solvablenames.Count() - 1)[0];
-                            text = "Apply the rule corresponding to the 1st character of the name of the solvable module on the bomb that comes last alphabetically, excluding modules that start with digits or symbols.";
+                        {// Implement failsafe to prevent an IndexOutOfBoundsException
+                            letter = ' ';
+                            text = "Apply no rule in this instruction. Literally.";
                         }
-                    else
-                    {// Implement failsafe to prevent an IndexOutOfBoundsException
-                        letter = ' ';
-                        text = "Apply no rule in this instruction. Literally.";
+                        break;
                     }
-                    break;
-                }
-            case 9:
-                {
-                    List<string> modnames = bomb.GetModuleNames().Where(a => a.RegexMatch(@"^[A-Z]|[a-z]")).ToList();
-                    modnames.Sort();
-                    if (modnames.Count > 0)
-                        if (rnd.Range(0, 2) == 0)
-                        {
-                            letter = modnames.ElementAt(0)[0];
-                            text = "Apply the rule corresponding to the 1st character of the name of the module on the bomb that comes 1st alphabetically, excluding modules that start with digits or symbols.";
-                        }
+                case 8:
+                    {
+                        List<string> modnames = bomb.GetModuleNames().Where(a => a.RegexMatch(@"^[A-Z]|[a-z]")).ToList();
+                        modnames.Sort();
+                        if (modnames.Count > 0)
+                            if (rnd.Range(0, 2) == 0)
+                            {
+                                letter = modnames.ElementAt(0)[0];
+                                text = "Apply the rule corresponding to the 1st character of the name of the module on the bomb that comes 1st alphabetically, excluding modules that start with digits or symbols.";
+                            }
+                            else
+                            {
+                                letter = modnames.ElementAt(modnames.Count() - 1)[0];
+                                text = "Apply the rule corresponding to the 1st character of the name of the module on the bomb that comes last alphabetically, excluding modules that start with digits or symbols.";
+                            }
                         else
-                        {
-                            letter = modnames.ElementAt(modnames.Count() - 1)[0];
-                            text = "Apply the rule corresponding to the 1st character of the name of the module on the bomb that comes last alphabetically, excluding modules that start with digits or symbols.";
+                        {// Implement failsafe to prevent an IndexOutOfBoundsException
+                            letter = ' ';
+                            text = "Apply no rule in this instruction. Literally.";
                         }
-                    else
-                    {// Implement failsafe to prevent an IndexOutOfBoundsException
+                        break;
+                    }
+                case 9:
+                    {
+                        text = "Apply the rule corresponding to the Xth letter of the Serial Number, where X is the number of unsolved modules on the bomb, modulo the number of letters in the Serial Number, plus 1.";
+                        break;
+                    }
+                default:
+                    {
                         letter = ' ';
                         text = "Apply no rule in this instruction. Literally.";
+                        break;
                     }
-                    break;
-                }
-            case 10:
-                {
-                    List<string> names = bomb.GetModuleNames();
-                    names.Sort();
-                    if (names.Count > 0)
-                        if (rnd.Range(0, 2) == 0)
-                        {
-                            letter = names.ElementAt(0)[0];
-                            text = "Apply the rule corresponding to the 1st character of the name of the solvable module on the bomb that comes " + GetOrdinal(1) + " alphabetically (if such rule exists).";
-                        }
-                        else
-                        {
-                            letter = names.ElementAt(names.Count() - 1)[0];
-                            text = "Apply the rule corresponding to the 1st character of the name of the solvable module on the bomb that comes last alphabetically (if such rule exists).";
-                        }
-                    else
-                    {// Implement failsafe to prevent an IndexOutOfBoundsException
-                        letter = ' ';
-                        text = "Apply no rule in this instruction. Literally.";
-                    }
-                    break;
-                }
-            default:
-                {
-                    letter = ' ';
-                    text = "Apply no rule in this instruction. Literally.";
-                    break;
-                }
+            }
+        }
+        catch (Exception error)
+        {
+            letter = ' ';
+            text = "Apply no rule in this instruction because the attempted instruction was causing an error. Literally.";
+            Debug.Log("An exception to Double Expert was caught for rare senarios. Yes this is not noticable on vanilla edgework but it can still happen on other edgework configs. - VFlyer");
+            Debug.LogError(error);
         }
     }
 
@@ -183,11 +154,13 @@ class LetterAlt
         int LetSerNumCnt = bomb.GetSerialNumberLetters().Count();
 
         if (rule == 1)
-            return bomb.GetSerialNumberLetters().ElementAt(bomb.GetSolvedModuleNames().Count() % LetSerNumCnt);
-        
-        if(rule == 2)
-            return bomb.GetSerialNumberLetters().ElementAt(keyNumber - LetSerNumCnt*Mathf.FloorToInt((float)keyNumber / LetSerNumCnt));
+            return bomb.GetSerialNumberLetters().ElementAtOrDefault(bomb.GetSolvedModuleNames().Count() % LetSerNumCnt);
 
+        if (rule == 2)
+            return bomb.GetSerialNumberLetters().ElementAtOrDefault(keyNumber - LetSerNumCnt*Mathf.FloorToInt((float)keyNumber / LetSerNumCnt));
+
+        if (rule == 9)
+            return bomb.GetSerialNumberLetters().ElementAtOrDefault((bomb.GetSolvableModuleNames().Count() - bomb.GetSolvedModuleNames().Count()) % LetSerNumCnt);
         return letter;
     }
 

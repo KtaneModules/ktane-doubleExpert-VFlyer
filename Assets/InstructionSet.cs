@@ -71,38 +71,44 @@ class InstructionSet
             else
             {
                 int prob = rnd.Range(0, 4);
-
-                if(prob == 0)
+                switch (prob)
                 {
-                    trueRules.Add((char) (rnd.Range(0, 26) + 65));
-                    falseRules.Add((char) (rnd.Range(0, 26) + 65));
+                    case 0:
+                        {// if prob == 0
+                            trueRules.Add((char)(rnd.Range(0, 26) + 65));
+                            falseRules.Add((char)(rnd.Range(0, 26) + 65));
 
-                    text = cond.GetText() + "apply rule " + trueRules.ElementAt(0) + ". Otherwise, apply rule " + falseRules.ElementAt(0) + ". Then, press NEXT.";
-                }
-                else if (prob == 1)
-                {
-                    trueRules.Add((char) (rnd.Range(0, 26) + 65));
-                    trueRules.Add((char) (rnd.Range(0, 26) + 65));
-                    falseRules.Add((char) (rnd.Range(0, 26) + 65));
+                            text = cond.GetText() + "apply rule " + trueRules.ElementAt(0) + ". Otherwise, apply rule " + falseRules.ElementAt(0) + ". Then, press NEXT.";
+                            break;
+                        }
+                    case 1:
+                        {// if prob == 1
+                            trueRules.Add((char)(rnd.Range(0, 26) + 65));
+                            trueRules.Add((char)(rnd.Range(0, 26) + 65));
+                            falseRules.Add((char)(rnd.Range(0, 26) + 65));
 
-                    text = cond.GetText() + "apply rules " + trueRules.ElementAt(0) + " and " + trueRules.ElementAt(1) + ", in that order. Otherwise, apply rule " + falseRules.ElementAt(0) + ". Then, press NEXT.";
-                }
-                else if (prob == 2)
-                {
-                    trueRules.Add((char) (rnd.Range(0, 26) + 65));
-                    falseRules.Add((char) (rnd.Range(0, 26) + 65));
-                    falseRules.Add((char) (rnd.Range(0, 26) + 65));
+                            text = cond.GetText() + "apply rules " + trueRules.ElementAt(0) + " and " + trueRules.ElementAt(1) + ", in that order. Otherwise, apply rule " + falseRules.ElementAt(0) + ". Then, press NEXT.";
+                            break;
+                        }
+                    case 2:
+                        {// if prob == 2
+                            trueRules.Add((char)(rnd.Range(0, 26) + 65));
+                            falseRules.Add((char)(rnd.Range(0, 26) + 65));
+                            falseRules.Add((char)(rnd.Range(0, 26) + 65));
 
-                    text = cond.GetText() + "apply rule " + trueRules.ElementAt(0) + ". Otherwise, apply rules " + falseRules.ElementAt(0) + " and " + falseRules.ElementAt(1) + ", in that order. Then, press NEXT.";
-                }
-                else
-                {
-                    trueRules.Add((char) (rnd.Range(0, 26) + 65));
-                    trueRules.Add((char) (rnd.Range(0, 26) + 65));
-                    falseRules.Add((char) (rnd.Range(0, 26) + 65));
-                    falseRules.Add((char) (rnd.Range(0, 26) + 65));
+                            text = cond.GetText() + "apply rule " + trueRules.ElementAt(0) + ". Otherwise, apply rules " + falseRules.ElementAt(0) + " and " + falseRules.ElementAt(1) + ", in that order. Then, press NEXT.";
+                            break;
+                        }
+                    default:
+                        {
+                            trueRules.Add((char)(rnd.Range(0, 26) + 65));
+                            trueRules.Add((char)(rnd.Range(0, 26) + 65));
+                            falseRules.Add((char)(rnd.Range(0, 26) + 65));
+                            falseRules.Add((char)(rnd.Range(0, 26) + 65));
 
-                    text = cond.GetText() + "apply rules " + trueRules.ElementAt(0) + " and " + trueRules.ElementAt(1) + ", in that order. Otherwise, apply rules " + falseRules.ElementAt(0) + " and " + falseRules.ElementAt(1) + ", in that order. Then, press NEXT.";
+                            text = cond.GetText() + "apply rules " + trueRules.ElementAt(0) + " and " + trueRules.ElementAt(1) + ", in that order. Otherwise, apply rules " + falseRules.ElementAt(0) + " and " + falseRules.ElementAt(1) + ", in that order. Then, press NEXT.";
+                            break;
+                        }
                 }
             }
         }

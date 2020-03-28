@@ -338,7 +338,7 @@ public class doubleExpertScript : MonoBehaviour
         }
 
         appliedRules.Remove(rule);
-        Debug.LogFormat("[Double Expert #{0}] No rule matches character {1}. Ignoring.", moduleId, rule);
+        Debug.LogFormat("[Double Expert #{0}] No rule matches character \"{1}\". Ignoring.", moduleId, rule);
         return false;
     }
 
