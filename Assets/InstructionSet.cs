@@ -17,15 +17,38 @@ class InstructionSet
     public List<char> trueRules = new List<char>();
     public List<char> falseRules = new List<char>();
 
-    public InstructionSet() {}
+    public InstructionSet()
+    { // Base Case;
+        int prob = rnd.Range(0, 9);
+        if (prob < 3)
+        {
+            trueRules.Add((char)(rnd.Range(0, 26) + 65));
+
+            text = "Apply rule " + trueRules.ElementAt(0) + ". Then, press NEXT.";
+        }
+        else if (prob < 6)
+        {
+            trueRules.Add((char)(rnd.Range(0, 26) + 65));
+            trueRules.Add((char)(rnd.Range(0, 26) + 65));
+
+            text = "Apply rules " + trueRules.ElementAt(0) + " and " + trueRules.ElementAt(1) + ", in that order. Then, press NEXT.";
+        }
+        else
+        {
+            trueRules.Add((char)(rnd.Range(0, 26) + 65));
+            trueRules.Add((char)(rnd.Range(0, 26) + 65));
+            trueRules.Add((char)(rnd.Range(0, 26) + 65));
+            text = "Apply rules " + trueRules.ElementAt(0) + ", " + trueRules.ElementAt(1) + " and " + trueRules.ElementAt(2) + ", in that order. Then, press NEXT.";
+        }
+    }
 
     public InstructionSet(KMBombInfo bomb, QuirkInfo qi)
     {
-        if(rnd.Range(0, 2) == 0)
+        if (rnd.Range(0, 2) == 0)
         {
-            int prob = rnd.Range(0, 10);
+            int prob = rnd.Range(0, 15);
 
-            if(prob < 6)
+            if(prob < 6 && bomb.GetSerialNumberLetters().Any()) // Check if the prob is under the value AND there are letters in the serial no.
             {
                 letter = new LetterAlt(bomb, qi);
                 runtimeLetter = true;
@@ -33,6 +56,12 @@ class InstructionSet
                 text = letter.GetText() + " Then, press NEXT.";
             }
             else if (prob < 9)
+            {
+                trueRules.Add((char)(rnd.Range(0, 26) + 65));
+
+                text = "Apply rule " + trueRules.ElementAt(0) + ". Then, press NEXT.";
+            }
+            else if (prob < 12)
             {
                 trueRules.Add((char) (rnd.Range(0, 26) + 65));
                 trueRules.Add((char) (rnd.Range(0, 26) + 65));

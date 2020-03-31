@@ -155,12 +155,14 @@ class LetterAlt
 
         if (rule == 1)
             return bomb.GetSerialNumberLetters().ElementAtOrDefault(bomb.GetSolvedModuleNames().Count() % LetSerNumCnt);
+        // Note since the number of solved modules is a positive int or 0, the more complicated method is not necessary.
 
         if (rule == 2)
             return bomb.GetSerialNumberLetters().ElementAtOrDefault(keyNumber - LetSerNumCnt*Mathf.FloorToInt((float)keyNumber / LetSerNumCnt));
 
         if (rule == 9)
             return bomb.GetSerialNumberLetters().ElementAtOrDefault((bomb.GetSolvableModuleNames().Count() - bomb.GetSolvedModuleNames().Count()) % LetSerNumCnt);
+        // Note since the number of unsolved modules is positive when this module is not solved, the more complicated method is not necessary.
         return letter;
     }
 
