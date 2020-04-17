@@ -19,27 +19,6 @@ class InstructionSet
 
     public InstructionSet()
     { // Base Case;
-        int prob = rnd.Range(0, 9);
-        if (prob < 3)
-        {
-            trueRules.Add((char)(rnd.Range(0, 26) + 65));
-
-            text = "Apply rule " + trueRules.ElementAt(0) + ". Then, press NEXT.";
-        }
-        else if (prob < 6)
-        {
-            trueRules.Add((char)(rnd.Range(0, 26) + 65));
-            trueRules.Add((char)(rnd.Range(0, 26) + 65));
-
-            text = "Apply rules " + trueRules.ElementAt(0) + " and " + trueRules.ElementAt(1) + ", in that order. Then, press NEXT.";
-        }
-        else
-        {
-            trueRules.Add((char)(rnd.Range(0, 26) + 65));
-            trueRules.Add((char)(rnd.Range(0, 26) + 65));
-            trueRules.Add((char)(rnd.Range(0, 26) + 65));
-            text = "Apply rules " + trueRules.ElementAt(0) + ", " + trueRules.ElementAt(1) + " and " + trueRules.ElementAt(2) + ", in that order. Then, press NEXT.";
-        }
     }
 
     public InstructionSet(KMBombInfo bomb, QuirkInfo qi)

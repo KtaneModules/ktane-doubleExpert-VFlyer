@@ -31,11 +31,13 @@ public class doubleExpertScript : MonoBehaviour
     int currentKeyword = 0;
     int correctKeyword = 0;
 
+
+
     int startTime;
     DayOfWeek day;
 
     QuirkInfo qi;
-    int keyNumber;
+    int keyNumber, startKeyNumber;
     InstructionSet[] sets;
     List<char> appliedRules = new List<char>();
 
@@ -44,6 +46,17 @@ public class doubleExpertScript : MonoBehaviour
 
     int currentInstructionSet = 0;
     int latestInstructionSet = 0;
+
+    public string GetSouvenirSubmittedWord()
+    {
+        if (currentInstructionSet != 0)
+            return keywords[correctKeyword];
+        return "";
+    }
+    public int GetSouvenirStartingNumber()
+    {
+        return startKeyNumber;
+    }
 
     void Awake()
     {
@@ -126,7 +139,8 @@ public class doubleExpertScript : MonoBehaviour
 
         screenObj.transform.GetComponentInChildren<Renderer>().material = screenColors[0];
 
-        keyNumber = rnd.Range(0, 40) + 30;
+        startKeyNumber = rnd.Range(0, 40) + 30;
+        keyNumber = startKeyNumber;
         Debug.LogFormat("[Double Expert #{0}] ------------Instruction Sets------------", moduleId);
 
         sets[0] = new KeyNumberSet(keyNumber);
@@ -279,7 +293,8 @@ public class doubleExpertScript : MonoBehaviour
 
     void GenerateInstructionSets()
     {
-        keyNumber = rnd.Range(0, 40) + 30;
+        startKeyNumber = rnd.Range(0, 40) + 30;
+        keyNumber = startKeyNumber;
 
         sets = new InstructionSet[7];
 
@@ -597,11 +612,16 @@ public class doubleExpertScript : MonoBehaviour
         Audio.PlaySoundAtTransform("solve", transform);
 
         float[] delayTimes = new float[] { 0.5f, 0.1f, 0.5f, 0.1f, 0.4f, 0.2f, 0.5f, 0.3f, 0.2f, 0.3f, 0.1f};
-
+        bool souvDetected = bomb.GetSolvableModuleNames().Contains("Souvenir");
         for (int x = 0; x < delayTimes.Length; x++)
         {
+            string scrambledText = "";
+            foreach (char let in keyword.text)
+                scrambledText += GetRandomChar();
+            keyword.text = souvDetected ? scrambledText : keyword.text;
             yield return new WaitForSeconds(delayTimes[x]);
             screenObj.SetActive(x % 2 != 0);
+
         }
     }
 

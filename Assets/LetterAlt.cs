@@ -85,7 +85,7 @@ class LetterAlt
                     }
                 case 7:
                     {
-                        List<string> solvablenames = bomb.GetSolvableModuleNames().Where(a => a.RegexMatch(@"^[A-Z]|[a-z]")).ToList();
+                        List<string> solvablenames = bomb.GetSolvableModuleNames().Where(a => a.Length > 0 && "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".Contains(a[0])).ToList();
                         solvablenames.Sort();
                         if (solvablenames.Count > 0)
                             if (rnd.Range(0, 2) == 0)
@@ -107,7 +107,7 @@ class LetterAlt
                     }
                 case 8:
                     {
-                        List<string> modnames = bomb.GetModuleNames().Where(a => a.RegexMatch(@"^[A-Z]|[a-z]")).ToList();
+                        List<string> modnames = bomb.GetModuleNames().Where(a => a.Length > 0 && "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".Contains(a[0])).ToList();
                         modnames.Sort();
                         if (modnames.Count > 0)
                             if (rnd.Range(0, 2) == 0)
@@ -144,7 +144,7 @@ class LetterAlt
         {
             letter = ' ';
             text = "Apply no rule in this instruction because the attempted instruction was causing an error. Literally.";
-            Debug.Log("An exception to Double Expert was caught for rare senarios. Yes this is not noticable on vanilla edgework but it can still happen on other edgework configs. - VFlyer");
+            Debug.Log("An exception to Double Expert was caught for rare cases. Yes this is not noticable but it can still happen. - VFlyer");
             Debug.LogError(error);
         }
     }
