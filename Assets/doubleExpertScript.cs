@@ -139,7 +139,12 @@ public class doubleExpertScript : MonoBehaviour
 
         screenObj.transform.GetComponentInChildren<Renderer>().material = screenColors[0];
 
-        startKeyNumber = rnd.Range(0, 40) + 30;
+        currentInstructionSet = 0;
+        latestInstructionSet = 0;
+        appliedRules = new List<char>();
+        GenerateInstructionSets();
+
+/*        startKeyNumber = rnd.Range(0, 40) + 30;
         keyNumber = startKeyNumber;
         Debug.LogFormat("[Double Expert #{0}] ------------Instruction Sets------------", moduleId);
 
@@ -149,11 +154,8 @@ public class doubleExpertScript : MonoBehaviour
 
         for (int i = 1; i < sets.Length; i++)
             Debug.LogFormat("[Double Expert #{0}] Instruction set {1} reads: \"{2}\"", moduleId, i + 1, sets[i].GetText());
-
-        currentInstructionSet = 0;
-        latestInstructionSet = 0;
-        appliedRules = new List<char>();
-        setDisplay = StartCoroutine(DisplaySet(currentInstructionSet));
+        
+        setDisplay = StartCoroutine(DisplaySet(currentInstructionSet));*/
     }
 
     void PrevSet()
@@ -170,7 +172,7 @@ public class doubleExpertScript : MonoBehaviour
         if (submiting)
             return;
 
-        if (currentInstructionSet == 0)
+        if (currentInstructionSet <= 0)
             return;
 
         currentInstructionSet--;
