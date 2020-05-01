@@ -154,8 +154,8 @@ public class doubleExpertScript : MonoBehaviour
 
         for (int i = 1; i < sets.Length; i++)
             Debug.LogFormat("[Double Expert #{0}] Instruction set {1} reads: \"{2}\"", moduleId, i + 1, sets[i].GetText());
-        
-        setDisplay = StartCoroutine(DisplaySet(currentInstructionSet));*/
+        */
+        setDisplay = StartCoroutine(DisplaySet(currentInstructionSet));
     }
 
     void PrevSet()
