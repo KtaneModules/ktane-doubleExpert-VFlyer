@@ -87,7 +87,7 @@ class LetterAlt
                     {
                         List<string> solvablenames = bomb.GetSolvableModuleNames().Where(a => a.Length > 0 && "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".Contains(a[0])).ToList();
                         solvablenames.Sort();
-                        if (solvablenames.Count > 0)
+                        if (solvablenames.Any())
                             if (rnd.Range(0, 2) == 0)
                             {
                                 letter = solvablenames.ElementAt(0)[0];
@@ -109,7 +109,7 @@ class LetterAlt
                     {
                         List<string> modnames = bomb.GetModuleNames().Where(a => a.Length > 0 && "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".Contains(a[0])).ToList();
                         modnames.Sort();
-                        if (modnames.Count > 0)
+                        if (modnames.Any())
                             if (rnd.Range(0, 2) == 0)
                             {
                                 letter = modnames.ElementAt(0)[0];
@@ -144,7 +144,7 @@ class LetterAlt
         {
             letter = ' ';
             text = "Apply no rule in this instruction because the attempted instruction was causing an error. Literally.";
-            Debug.Log("An exception to Double Expert was caught for rare cases. Yes this is not noticable but it can still happen. - VFlyer");
+            Debug.Log("An exception to Double Expert was caught for rare cases. Yes this is not noticable as much as other instances but it can still happen.");
             Debug.LogError(error);
         }
     }
@@ -158,7 +158,7 @@ class LetterAlt
         // Note since the number of solved modules is a positive int or 0, the more complicated method is not necessary.
 
         if (rule == 2)
-            return bomb.GetSerialNumberLetters().ElementAtOrDefault(keyNumber - LetSerNumCnt*Mathf.FloorToInt((float)keyNumber / LetSerNumCnt));
+            return bomb.GetSerialNumberLetters().ElementAtOrDefault(keyNumber - LetSerNumCnt * Mathf.FloorToInt((float)keyNumber / LetSerNumCnt));
 
         if (rule == 9)
             return bomb.GetSerialNumberLetters().ElementAtOrDefault((bomb.GetSolvableModuleNames().Count() - bomb.GetSolvedModuleNames().Count()) % LetSerNumCnt);

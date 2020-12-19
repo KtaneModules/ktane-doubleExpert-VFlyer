@@ -111,7 +111,7 @@ public class doubleExpertScript : MonoBehaviour
         {
             if (currentKeyword == correctKeyword)
             {
-                Debug.LogFormat("[Double Expert #{0}] Submitted {1}. Module solved.", moduleId, keywords.ElementAt(correctKeyword));
+                Debug.LogFormat("[Double Expert #{0}] Correctly submitted {1}. Module solved.", moduleId, keywords.ElementAt(correctKeyword));
                 if (keywordLoop != null) StopCoroutine(keywordLoop);
                 moduleSolved = true;
                 GetComponent<KMBombModule>().HandlePass();
@@ -119,7 +119,7 @@ public class doubleExpertScript : MonoBehaviour
             }
             else
             {
-                Debug.LogFormat("[Double Expert #{0}] Strike! Submitted {1}. Expected {2}.", moduleId, keywords.ElementAt(currentKeyword), keywords.ElementAt(correctKeyword));
+                Debug.LogFormat("[Double Expert #{0}] Strike! Incorrectly submitted {1}. Expected {2}.", moduleId, keywords.ElementAt(currentKeyword), keywords.ElementAt(correctKeyword));
                 GetComponent<KMBombModule>().HandleStrike();
                 RestartModule();
             }
@@ -206,7 +206,7 @@ public class doubleExpertScript : MonoBehaviour
                 {
                     if (currentKeyword == correctKeyword)
                     {
-                        Debug.LogFormat("[Double Expert #{0}] Submitted {1}. Module solved.", moduleId, keywords.ElementAt(correctKeyword));
+                        Debug.LogFormat("[Double Expert #{0}] Correctly submitted {1}. Module solved.", moduleId, keywords.ElementAt(correctKeyword));
                         if (keywordLoop != null) StopCoroutine(keywordLoop);
                         moduleSolved = true;
                         GetComponent<KMBombModule>().HandlePass();
@@ -214,7 +214,7 @@ public class doubleExpertScript : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogFormat("[Double Expert #{0}] Strike! Submitted {1}. Expected {2}.", moduleId, keywords.ElementAt(currentKeyword), keywords.ElementAt(correctKeyword));
+                        Debug.LogFormat("[Double Expert #{0}] Strike! Incorrectly submitted {1}. Expected {2}.", moduleId, keywords.ElementAt(currentKeyword), keywords.ElementAt(correctKeyword));
                         GetComponent<KMBombModule>().HandleStrike();
                         RestartModule();
                     }
@@ -296,7 +296,7 @@ public class doubleExpertScript : MonoBehaviour
     void GenerateInstructionSets()
     {
         startKeyNumber = rnd.Range(0, 40) + 30;
-        keyNumber = startKeyNumber;
+        keyNumber = startKeyNumber * 1;
 
         sets = new InstructionSet[7];
 
@@ -317,7 +317,7 @@ public class doubleExpertScript : MonoBehaviour
     char GetRandomChar()
     {
         char[] chars = new char[] { '|', '\\', '!', '"', '@', '#', '£', '$', '§', '%', '&', '/', '{', '(', '[', ')', ']', '=', '}', '?', '\'', '»', '«', '<', '>', '€', ',', ';', '.', ':', '-', '_', '*', '+' };
-        return chars[rnd.Range(0, chars.Length)];
+        return chars.PickRandom();
     }
 
     bool CheckRule(char rule)
@@ -378,7 +378,7 @@ public class doubleExpertScript : MonoBehaviour
             case 'M': keyNumber -= bomb.GetPortCount() * qi.addMultiplier; break;
             case 'N': keyNumber += bomb.GetSolvedModuleNames().Count() * qi.addMultiplier; break;
             case 'O': keyNumber *= 2; break;
-            case 'P': keyNumber += (bomb.GetPortCount() - bomb.GetPortCount(Port.DVI)) * qi.addMultiplier; break;
+            case 'P': keyNumber += (bomb.GetPortCount() - bomb.GetPortCount(Port.DVI) * qi.addMultiplier) * qi.addMultiplier; break;
             case 'Q': keyNumber -= GetAlphaPositionSun() * qi.addMultiplier; break;
             case 'R': keyNumber -= bomb.GetSerialNumberNumbers().Sum() * qi.addMultiplier; break;
             case 'S': keyNumber += bomb.GetPortPlateCount() * qi.addMultiplier; break;
@@ -473,8 +473,12 @@ public class doubleExpertScript : MonoBehaviour
         keywords = GetRandomKeywords();
         string correct;
 
-        Debug.LogFormat("[Double Expert #{0}] Available keywords are [ {1}].", moduleId, GetKeywords(keywords));
+        Debug.LogFormat("[Double Expert #{0}] Available keywords: [ {1} ].", moduleId, keywords.Join(", "));
 
+        correctKeyword = Mathf.Max(0,
+            Mathf.Min(Mathf.CeilToInt(keyNumber / 15f), 7)
+            );
+        /*
         if (keyNumber <= 0) correct = keywords.ElementAt(0);
         else if (keyNumber <= 15) correct = keywords.ElementAt(1);
         else if (keyNumber <= 30) correct = keywords.ElementAt(2);
@@ -483,10 +487,11 @@ public class doubleExpertScript : MonoBehaviour
         else if (keyNumber <= 75) correct = keywords.ElementAt(5);
         else if (keyNumber <= 90) correct = keywords.ElementAt(6);
         else correct = keywords.ElementAt(7);
+        */
+        correct = keywords.ElementAtOrDefault(correctKeyword);
+        Debug.LogFormat("[Double Expert #{0}] Correct keyword: {1}.", moduleId, correct);
 
-        Debug.LogFormat("[Double Expert #{0}] Correct keyword is {1}.", moduleId, correct);
-
-        keywords = keywords.OrderBy(x => rnd.Range(0, 1000)).ToList();
+        keywords = keywords.Shuffle();
         correctKeyword = keywords.IndexOf(correct);
         keywordLoop = StartCoroutine(KeywordLoop(keywords));
     }
@@ -506,30 +511,25 @@ public class doubleExpertScript : MonoBehaviour
         yield break;
     }
 
+    string[][] allPossibleWords = new string[][] {
+            new string[] { "Apple", "Delta", "Greek", "Juliett", "Maniac", "Papa", "Single", "Victor", "X-ray", "YMCA", "Zulu" },
+            new string[] { "Alpha", "Diamond", "Golf", "Jenga", "Mike", "Pope", "Sierra", "Vow", "Xbox", "Yo-Yo", "Zebra" },
+            new string[] { "Banana", "Echo", "Hawaii", "Kilo", "Nutmeg", "Quebec", "Triple", "Violet", "X-file", "Ygor", "Zapra" },
+            new string[] { "Beta", "Emerald", "Hotel", "Kenya", "November", "Quiet", "Tango", "Vent Gas", "Xcitebike", "Yeet", "Zebstrika" },
+            new string[] { "Cherry", "Foxtrot", "Indigo", "Lima", "Otto", "Romeo", "Ultimate", "Whiskey", "X-men", "Yippy", "Zenoblade" },
+            new string[] { "Charlie", "Fluorite", "India", "Lingerie", "Oscar", "Rodeo", "Uniform", "Wires", "X-mas", "Yes", "Zelda" },
+            new string[] { "Back", "Define", "High", "Jackal", "Monsplode", "Quiper", "Stunt", "Words", "Xenoblade", "YoVile", "Zen Mode" },
+            new string[] { "Cabin", "FedEx", "Gothi", "Kojima", "Nominate", "Prequire", "Tuesday", "Wii", "X01", "Yankee", "Zoo" },
+            new string[] { "Chocolate", "Diadem", "Half", "Jakarta", "Not", "Rope", "Thursday", "Warsaw", "X", "Yodeling", "Zero" }
+    };
+
     List<string> GetRandomKeywords()
     {
         List<string> ret = new List<string>();
-
-        ret.Add(new string[] { "Apple", "Delta", "Greek", "Juliett", "Maniac", "Papa", "Single", "Victor", "X-ray", "YMCA", "Zulu" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
-        ret.Add(new string[] { "Alpha", "Diamond", "Golf", "Jenga", "Mike", "Pope", "Sierra", "Vow", "Xbox", "Yo-Yo", "Zebra" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
-        ret.Add(new string[] { "Banana", "Echo", "Hawaii", "Kilo", "Nutmeg", "Quebec", "Triple", "Violet", "X-file", "Ygor", "Zapra" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
-        ret.Add(new string[] { "Beta", "Emerald", "Hotel", "Kenya", "November", "Quiet", "Tango", "Vent Gas", "Xcitebike", "Yeet", "Zebstrika" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
-        ret.Add(new string[] { "Cherry", "Foxtrot", "Indigo", "Lima", "Otto", "Romeo", "Ultimate", "Whiskey", "X-men", "Yippy", "Zenoblade" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
-        ret.Add(new string[] { "Charlie", "Fluorite", "India", "Lingerie", "Oscar", "Rodeo", "Uniform", "Wires", "X-mas", "Yes", "Zelda" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
-        ret.Add(new string[] { "Back", "Define", "High", "Jackal", "Monsplode", "Quiper", "Stunt", "Words", "Xenoblade", "YoVile", "Zen Mode" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
-        ret.Add(new string[] { "Cabin", "FedEx", "Gothi", "Kojima", "Nominate", "Prequire", "Tuesday", "Wii", "X01", "Yankee", "Zoo" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
-        ret.Add(new string[] { "Chocolate", "Diadem", "Half", "Jakarta", "Not", "Rope", "Thursday", "Warsaw", "X", "Yodeling", "Zero" }.ToList().OrderBy(x => rnd.Range(0, 1000)).ElementAt(0));
-
-        return ret;
-    }
-
-    string GetKeywords(List<string> keywords)
-    {
-        string ret = "";
-
-        foreach (string kw in keywords)
-            ret += kw + ", ";
-
+        for (int x=0;x<allPossibleWords.Length;x++)
+        {
+            ret.Add(allPossibleWords[x].PickRandom());
+        }
         return ret;
     }
 
@@ -618,13 +618,14 @@ public class doubleExpertScript : MonoBehaviour
         for (int x = 0; x < delayTimes.Length; x++)
         {
             string scrambledText = "";
-            foreach (char let in keyword.text)
+            int maxLength = rnd.Range(4, 10);
+            for (int y = 0; y < maxLength; y++)
                 scrambledText += GetRandomChar();
             keyword.text = souvDetected ? scrambledText : keyword.text;
             yield return new WaitForSeconds(delayTimes[x]);
             screenObj.SetActive(x % 2 != 0);
-
         }
+        keyword.text = "";
     }
 
     //twitch plays
@@ -639,7 +640,8 @@ public class doubleExpertScript : MonoBehaviour
         }
         return false;
     }
-
+    // Legacy Force Solve Handling.
+    /*
     IEnumerator HandleForceSolve()
     {
         if (!(submiting || qi.nextIsSwitch)) // Quirk 5 condition
@@ -662,14 +664,34 @@ public class doubleExpertScript : MonoBehaviour
             btns[1].OnInteract();
         yield return null;
     }
-
-    void TwitchHandleForcedSolve()
+    */
+    IEnumerator TwitchHandleForcedSolve()
     {
         Debug.LogFormat("[Double Expert #{0}] A force solve has been issued from TP's handler.", moduleId);
-        StartCoroutine(HandleForceSolve());
+        if (!(submiting || qi.nextIsSwitch)) // Quirk 5 condition
+            switchBtn.OnInteract();
+        else
+            while (!submiting)
+            {
+                btns[1].OnInteract();
+                yield return new WaitForSeconds(0.1f);
+            }
+        if (!moduleSolved) // Unicorn Rule, AKA April 9th. Quirk 7.
+        {
+            do
+            {
+                yield return true;
+            }
+            while (currentKeyword != correctKeyword);
+            if (!qi.nextIsSwitch) // Quirk 5 condition
+                switchBtn.OnInteract();
+            else
+                btns[1].OnInteract();
+            yield return null;
+        }
     }
 
-    #pragma warning disable 414
+#pragma warning disable 414
     private readonly string TwitchHelpMessage = "To press the \"previous\" button: \"!{0} prev\" or \"!{0} previous\", To press the \"next\" button: \"!{0} next\", \"Press\" is optional.\n"+
         "To flip/toggle the switch any time: \"!{0} toggle\" or \"!{0} flip\", To flip/toggle the switch on a specific keyword: \"!{0} toggle <word>\" or \"!{0} flip <word>\" This will press 'next' at the given word if corresponding quirk rule applies.\n"+
         "To start over or to reset the module ENTIRELY: \"!{0} reset\" or \"!{0} restart\" This WILL create new numbers and/or sets upon using this command!";
@@ -717,11 +739,10 @@ public class doubleExpertScript : MonoBehaviour
             curKeyword = curKeyword.Trim();
             int attemptsChecked = 0;
             int idxDetect = -1;
-            string lastDisplay = "";
+            string lastDisplay = keywords[currentKeyword];
             yield return null;
             do
             {
-                yield return "trycancel The switch wasn't flipped due to a request to cancel.";
                 if (lastDisplay != keywords[currentKeyword])
                 {
                     lastDisplay = keywords[currentKeyword];
@@ -729,6 +750,7 @@ public class doubleExpertScript : MonoBehaviour
                     if (keywords[currentKeyword].EqualsIgnoreCase(curKeyword))
                         idxDetect = currentKeyword;
                 }
+                yield return "trywaitcancel 0.0 The switch wasn't flipped due to a request to cancel.";
             }
             while (attemptsChecked < 19 && idxDetect != currentKeyword);
             if (attemptsChecked < 19)
