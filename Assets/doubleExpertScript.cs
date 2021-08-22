@@ -384,7 +384,7 @@ public class doubleExpertScript : MonoBehaviour
             case 'S': keyNumber += bomb.GetPortPlateCount() * qi.addMultiplier; break;
             case 'T': keyNumber += GetVowelNumber() * bomb.GetSerialNumberNumbers().ElementAt(bomb.GetSerialNumberNumbers().Count() - 1) * qi.addMultiplier; break;
             case 'U': keyNumber = CalcDigitalRoot(keyNumber); break;
-            case 'V': keyNumber += (bomb.GetModuleNames().Count() - bomb.GetSolvableModuleNames().Count() == 0 ? 9 : bomb.GetModuleNames().Count() - bomb.GetSolvableModuleNames().Count()) * qi.addMultiplier; break;
+            case 'V': keyNumber += 2 * (bomb.GetModuleNames().Count() == bomb.GetSolvableModuleNames().Count() ? 9 : bomb.GetModuleNames().Count() - bomb.GetSolvableModuleNames().Count()) * qi.addMultiplier; break;
             case 'W': keyNumber -= bomb.GetBatteryHolderCount() * qi.addMultiplier; break;
             case 'X': keyNumber *= -1; break;
             case 'Y': keyNumber += (bomb.GetBatteryCount() + bomb.GetIndicators().Count() + bomb.GetPortCount()) * qi.addMultiplier; break;
@@ -501,12 +501,12 @@ public class doubleExpertScript : MonoBehaviour
         for (int x = 0; x < 5; x++)
         {
             anim.transform.localPosition += Vector3.down / 500;
-            yield return new WaitForSeconds(0);
+            yield return new WaitForSeconds(0.01f);
         }
         for (int x = 0; x < 5; x++)
         {
             anim.transform.localPosition += Vector3.up / 500;
-            yield return new WaitForSeconds(0);
+            yield return new WaitForSeconds(0.01f);
         }
         yield break;
     }
@@ -548,7 +548,7 @@ public class doubleExpertScript : MonoBehaviour
         {
             for (int j = 0; j < words[i].Length; j++)
             {
-                if (rnd.Range(0, 12) < prob)
+                if (rnd.Range(0, 100) < prob)
                 {
                     char[] chars = words[i].ToCharArray();
                     chars[j] = GetRandomChar();
@@ -678,11 +678,10 @@ public class doubleExpertScript : MonoBehaviour
             }
         if (!moduleSolved) // Unicorn Rule, AKA April 9th. Quirk 7.
         {
-            do
+            while (currentKeyword != correctKeyword)
             {
                 yield return true;
             }
-            while (currentKeyword != correctKeyword);
             if (!qi.nextIsSwitch) // Quirk 5 condition
                 switchBtn.OnInteract();
             else
@@ -750,7 +749,7 @@ public class doubleExpertScript : MonoBehaviour
                     if (keywords[currentKeyword].EqualsIgnoreCase(curKeyword))
                         idxDetect = currentKeyword;
                 }
-                yield return "trywaitcancel 0.0 The switch wasn't flipped due to a request to cancel.";
+                yield return "trycancel The switch wasn't flipped due to a request to cancel.";
             }
             while (attemptsChecked < 19 && idxDetect != currentKeyword);
             if (attemptsChecked < 19)
@@ -764,9 +763,9 @@ public class doubleExpertScript : MonoBehaviour
                     switchBtn.OnInteract();
                 }
             }
-            else if(currentInstructionSet < sets.Length-1)
+            else if (currentInstructionSet < sets.Length - 1 && allPossibleWords.Any(a => a.Contains(curKeyword)))
             {
-                yield return "sendtochat \"" + curKeyword + "\" does not appear in the set of words given! Because of an early flip, the unsubmittable penalty will be handled.";
+                yield return "sendtochat \"" + curKeyword + "\" does not appear in the set of words given! Because of an early flip AND trying to guess the correct word, you will be penalized.";
                 yield return "unsubmittablepenalty";
             }
             else
