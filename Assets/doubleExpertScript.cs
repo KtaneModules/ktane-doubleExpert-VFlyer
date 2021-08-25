@@ -629,6 +629,8 @@ public class doubleExpertScript : MonoBehaviour
     }
 
     //twitch plays
+    // Unused
+    /*
     private bool isInputValid(string sn)
     {
         foreach (string s in keywords)
@@ -640,6 +642,7 @@ public class doubleExpertScript : MonoBehaviour
         }
         return false;
     }
+    */
     // Legacy Force Solve Handling.
     /*
     IEnumerator HandleForceSolve()
@@ -763,7 +766,7 @@ public class doubleExpertScript : MonoBehaviour
                     switchBtn.OnInteract();
                 }
             }
-            else if (currentInstructionSet < sets.Length - 1 && allPossibleWords.Any(a => a.Contains(curKeyword)))
+            else if (currentInstructionSet < sets.Length - 1 && allPossibleWords.Any(a => a.Any(b => b.EqualsIgnoreCase(curKeyword))))
             {
                 yield return "sendtochat \"" + curKeyword + "\" does not appear in the set of words given! Because of an early flip AND trying to guess the correct word, you will be penalized.";
                 yield return "unsubmittablepenalty";
