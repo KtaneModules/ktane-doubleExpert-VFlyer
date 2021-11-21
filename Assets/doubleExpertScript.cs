@@ -329,7 +329,7 @@ public class doubleExpertScript : MonoBehaviour
             case 'A': return (bomb.GetSerialNumber().IndexOfAny(qi.vowels.ToArray()) != -1) || qi.mayNinth;
             case 'B': return bomb.GetBatteryCount() > 3 || qi.mayNinth;
             case 'C': return bomb.IsPortPresent(Port.Parallel) && qi.portCondition;
-            case 'D': return bomb.GetPortPlateCount() > 2 && qi.portCondition;
+            case 'D': return bomb.GetPortPlateCount() > 2;
             case 'E': return bomb.GetSerialNumber().IndexOfAny(new char[] { '2', '3', '5', '7' }) != -1;
             case 'F': return bomb.IsPortPresent(Port.StereoRCA) && qi.portCondition;
             case 'G': return appliedRules.Count() != 1 ? qi.vowels.Contains(appliedRules.ElementAt(appliedRules.Count() - 2)) : false;
